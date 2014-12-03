@@ -64,5 +64,25 @@ public class CS2150Coursework extends GraphicsLab
     protected void cleanupScene()
     {//TODO: Clean up your resources here
     }
-
+    
+    private void drawUnitWindmill(){
+    	Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
+    	Vertex v2 = new Vertex(-1.0f, 0.0f, 0.5f);
+    	Vertex v3 = new Vertex(-0.5f, 0.0f, 1.0f);
+    	Vertex v4 = new Vertex(0.5f, 0.0f, 1.0f);
+    	Vertex v5 = new Vertex(1.0f, 0.0f, 0.5f);
+    	Vertex v6 = new Vertex(0.75f, 8.0f, 0.5f);
+    	Vertex v7 = new Vertex(0.0f, 8.0f, 0.25f);
+    	Vertex v8 = new Vertex(-0.75f, 8.0f, 0.5f);
+    	Vertex v9 = new Vertex(-0.25f, 8.0f, 0.75f);
+    	Vertex v10 = new Vertex(0.25f, 8.0f, 0.75f);
+    	Vertex v11 = new Vertex(0.75f, 9.0f, 0.5f);
+    	Vertex v12 = new Vertex(0.25f, 9.0f, 0.75f);
+    	Vertex v13 = new Vertex(-0.25f, 9.0f, 0.75f);
+    	Vertex v14 = new Vertex(-0.75f, 9.0f, 0.5f);
+    	Vertex v15 = new Vertex(0.0f, 9.0f, 0.25f);
+    	Vertex v16 = new Vertex(0.0f, 9.5f, 0.5f);
+    	
+    	
+    }
 }
