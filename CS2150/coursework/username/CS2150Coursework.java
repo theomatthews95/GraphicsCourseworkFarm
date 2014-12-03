@@ -10,6 +10,7 @@
 package coursework.username;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.opengl.Texture;
@@ -45,6 +46,11 @@ public class CS2150Coursework extends GraphicsLab
     	GL11.glNewList(windmillList, GL11.GL_COMPILE);
     	{	
     		drawUnitWindmill();
+    		drawUnitBlades();
+
+        	
+    		 
+ 
     	}
     	GL11.glEndList();
     	
@@ -63,7 +69,9 @@ public class CS2150Coursework extends GraphicsLab
      //      It will probably call a number of other methods you will write.
     	GL11.glTranslatef(0.0f, -0.5f, -5.0f);
     	GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-    	//GL11.glScalef(0.5f, 1f, 4f);
+    	GL11.glScalef(0.2f, 0.2f, 0.2f);
+    //	GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+    	new Cylinder().draw(1.0f, 6.0f, 2.5f, 10, 10);
     	GL11.glCallList(windmillList);
     	
     }
@@ -86,21 +94,22 @@ public class CS2150Coursework extends GraphicsLab
     //the vertices for the windmill 
     	
     	Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
-    	Vertex v2 = new Vertex(-2.0f, 0.0f, 2.0f);
-    	Vertex v3 = new Vertex(-1.0f, 0.0f, 4.0f);
-    	Vertex v4 = new Vertex(1.0f, 0.0f, 4.0f);
-    	Vertex v5 = new Vertex(2.0f, 0.0f, 2.0f);
-    	Vertex v6 = new Vertex(1.5f, 5.0f, 2.0f);
+    	Vertex v2 = new Vertex(-3.0f, 0.0f, 2.0f);
+    	Vertex v3 = new Vertex(-1.5f, 0.0f, 5.0f);
+    	Vertex v4 = new Vertex(1.5f, 0.0f, 5.0f);
+    	Vertex v5 = new Vertex(3.0f, 0.0f, 2.0f);
+    	Vertex v6 = new Vertex(1.5f, 5.0f, 2.5f);
     	Vertex v7 = new Vertex(0.0f, 5.0f, 1.0f);
-    	Vertex v8 = new Vertex(-1.5f, 5.0f, 2.0f);
-    	Vertex v9 = new Vertex(-0.5f, 5.0f, 3.0f);
-    	Vertex v10 = new Vertex(0.5f, 5.0f, 3.0f);
-    	Vertex v11 = new Vertex(1.5f, 7.0f, 2.0f);
-    	Vertex v12 = new Vertex(0.5f, 7.0f, 3.0f);
-    	Vertex v13 = new Vertex(-0.5f, 7.0f, 3.0f);
-    	Vertex v14 = new Vertex(-1.5f, 7.0f, 2.0f);
+    	Vertex v8 = new Vertex(-1.5f, 5.0f, 2.5f);
+    	Vertex v9 = new Vertex(-0.5f, 5.0f, 4.0f);
+    	Vertex v10 = new Vertex(0.5f, 5.0f, 4.0f);
+    	Vertex v11 = new Vertex(1.5f, 7.0f, 2.5f);
+    	Vertex v12 = new Vertex(0.5f, 7.0f, 4.0f);
+    	Vertex v13 = new Vertex(-0.5f, 7.0f, 4.0f);
+    	Vertex v14 = new Vertex(-1.5f, 7.0f, 2.5f);
     	Vertex v15 = new Vertex(0.0f, 7.0f, 1.0f);
-    	Vertex v16 = new Vertex(0.0f, 8.0f, 2.0f);
+    	Vertex v16 = new Vertex(0.0f, 8.0f, 2.5f);
+    	
     	
     	//bottom
     	GL11.glBegin(GL11.GL_POLYGON);
@@ -245,5 +254,37 @@ public class CS2150Coursework extends GraphicsLab
 				v16.submit();
 				}
 		GL11.glEnd();
+    }
+    
+    private void drawUnitBlades(){
+    	Vertex v1 = new Vertex(0.0f, 6.0f, 4.1f);
+    	Vertex v2 = new Vertex(0.2f, 7.5f, 4.1f);
+    	Vertex v3 = new Vertex(-0.2f, 7.5f, 4.1f);
+    	Vertex v4 = new Vertex(-0.2f, 4.5f, 4.1f);
+    	Vertex v5 = new Vertex(0.2f, 4.5f, 4.1f);
+    	Vertex v6 = new Vertex(1.5f, 6.2f, 4.1f);
+    	Vertex v7 = new Vertex(1.5f, 5.8f, 4.1f);
+    	Vertex v8 = new Vertex(-1.5f, 6.2f, 4.1f);
+    	Vertex v9 = new Vertex(-1.5f, 5.8f, 4.1f);
+    	
+    	//first vertical blade
+    	GL11.glBegin(GL11.GL_POLYGON);
+    	{
+			v2.submit();
+			v3.submit();
+			v4.submit();
+			v5.submit();
+		}
+		GL11.glEnd();
+		
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+			v8.submit();
+			v9.submit();
+			v7.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+	    
     }
 }

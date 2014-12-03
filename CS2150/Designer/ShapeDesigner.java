@@ -40,7 +40,7 @@ public class ShapeDesigner extends AbstractDesigner {
     	GL11.glNewList(cubeList,GL11.GL_COMPILE);
         {   
         	drawUnitCube();
-        	
+        	drawUnitBlades();
         }
         GL11.glEndList();
         
@@ -56,21 +56,21 @@ public class ShapeDesigner extends AbstractDesigner {
     {
 
     	Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
-    	Vertex v2 = new Vertex(-2.0f, 0.0f, 2.0f);
-    	Vertex v3 = new Vertex(-1.0f, 0.0f, 4.0f);
-    	Vertex v4 = new Vertex(1.0f, 0.0f, 4.0f);
-    	Vertex v5 = new Vertex(2.0f, 0.0f, 2.0f);
-    	Vertex v6 = new Vertex(1.5f, 5.0f, 2.0f);
+    	Vertex v2 = new Vertex(-3.0f, 0.0f, 2.0f);
+    	Vertex v3 = new Vertex(-1.5f, 0.0f, 4.3f);
+    	Vertex v4 = new Vertex(1.5f, 0.0f, 4.3f);
+    	Vertex v5 = new Vertex(3.0f, 0.0f, 2.0f);
+    	Vertex v6 = new Vertex(1.5f, 5.0f, 2.5f);
     	Vertex v7 = new Vertex(0.0f, 5.0f, 1.0f);
-    	Vertex v8 = new Vertex(-1.5f, 5.0f, 2.0f);
-    	Vertex v9 = new Vertex(-0.5f, 5.0f, 3.0f);
-    	Vertex v10 = new Vertex(0.5f, 5.0f, 3.0f);
-    	Vertex v11 = new Vertex(1.5f, 7.0f, 2.0f);
-    	Vertex v12 = new Vertex(0.5f, 7.0f, 3.0f);
-    	Vertex v13 = new Vertex(-0.5f, 7.0f, 3.0f);
-    	Vertex v14 = new Vertex(-1.5f, 7.0f, 2.0f);
+    	Vertex v8 = new Vertex(-1.5f, 5.0f, 2.5f);
+    	Vertex v9 = new Vertex(-0.5f, 5.0f, 4.0f);
+    	Vertex v10 = new Vertex(0.5f, 5.0f, 4.0f);
+    	Vertex v11 = new Vertex(1.5f, 7.0f, 2.5f);
+    	Vertex v12 = new Vertex(0.5f, 7.0f, 4.0f);
+    	Vertex v13 = new Vertex(-0.5f, 7.0f, 4.0f);
+    	Vertex v14 = new Vertex(-1.5f, 7.0f, 2.5f);
     	Vertex v15 = new Vertex(0.0f, 7.0f, 1.0f);
-    	Vertex v16 = new Vertex(0.0f, 8.0f, 2.0f);
+    	Vertex v16 = new Vertex(0.0f, 8.0f, 2.5f);
     	
     	//bottom
     	GL11.glBegin(GL11.GL_POLYGON);
@@ -218,5 +218,37 @@ public class ShapeDesigner extends AbstractDesigner {
 	    
     }
 
+    private void drawUnitBlades(){
+    	Vertex v1 = new Vertex(0.0f, 6.0f, 4.1f);
+    	Vertex v2 = new Vertex(0.2f, 7.5f, 4.1f);
+    	Vertex v3 = new Vertex(-0.2f, 7.5f, 4.1f);
+    	Vertex v4 = new Vertex(-0.2f, 4.5f, 4.1f);
+    	Vertex v5 = new Vertex(0.2f, 4.5f, 4.1f);
+    	Vertex v6 = new Vertex(1.5f, 6.2f, 4.1f);
+    	Vertex v7 = new Vertex(1.5f, 5.8f, 4.1f);
+    	Vertex v8 = new Vertex(-1.5f, 6.2f, 4.1f);
+    	Vertex v9 = new Vertex(-1.5f, 5.8f, 4.1f);
+    	
+    	//first vertical blade
+    	GL11.glBegin(GL11.GL_POLYGON);
+    	{
+			v2.submit();
+			v3.submit();
+			v4.submit();
+			v5.submit();
+		}
+		GL11.glEnd();
+		
+		//second horizontal blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+			v8.submit();
+			v9.submit();
+			v7.submit();
+			v6.submit();
+		}
+		GL11.glEnd();
+	    
+    }
     }
 
