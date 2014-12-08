@@ -220,14 +220,14 @@ public class ShapeDesigner extends AbstractDesigner {
 
     private void drawUnitBlades(){
     	Vertex v1 = new Vertex(0.0f, 6.0f, 4.1f);
-    	Vertex v2 = new Vertex(0.2f, 7.5f, 4.1f);
-    	Vertex v3 = new Vertex(-0.2f, 7.5f, 4.1f);
-    	Vertex v4 = new Vertex(-0.2f, 4.5f, 4.1f);
-    	Vertex v5 = new Vertex(0.2f, 4.5f, 4.1f);
-    	Vertex v6 = new Vertex(1.5f, 6.2f, 4.1f);
-    	Vertex v7 = new Vertex(1.5f, 5.8f, 4.1f);
-    	Vertex v8 = new Vertex(-1.5f, 6.2f, 4.1f);
-    	Vertex v9 = new Vertex(-1.5f, 5.8f, 4.1f);
+    	Vertex v2 = new Vertex(0.2f, 9.5f, 4.1f);
+    	Vertex v3 = new Vertex(-0.2f, 9.5f, 4.1f);
+    	Vertex v4 = new Vertex(-0.2f, 2.5f, 4.1f);
+    	Vertex v5 = new Vertex(0.2f, 2.5f, 4.1f);
+    	Vertex v6 = new Vertex(3.5f, 6.2f, 4.1f);
+    	Vertex v7 = new Vertex(3.5f, 5.8f, 4.1f);
+    	Vertex v8 = new Vertex(-3.5f, 6.2f, 4.1f);
+    	Vertex v9 = new Vertex(-3.5f, 5.8f, 4.1f);
     	
     	//first vertical blade
     	GL11.glBegin(GL11.GL_POLYGON);

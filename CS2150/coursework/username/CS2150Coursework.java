@@ -33,7 +33,11 @@ import GraphicsLab.*;
 public class CS2150Coursework extends GraphicsLab
 {
     private final int windmillList = 1;
-	
+    private final int planeList = 2;
+    private Texture groundTexture;
+    private Texture skyTexture;
+    private Texture windmillWallTexture;
+    
 	//TODO: Feel free to change the window title and default animation scale here
     public static void main(String args[])
     {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.01f);
@@ -42,18 +46,21 @@ public class CS2150Coursework extends GraphicsLab
 
     protected void initScene() throws Exception
     {//TODO: Initialise your resources here - might well call other methods you write.
-    	
+    	groundTexture = loadTexture("coursework/username/textures/GrassTest01.jpg");
+    	skyTexture = loadTexture("coursework/username/textures/sky.png");
+    	windmillWallTexture = loadTexture("coursework/username/textures/AntiqueBrickTexture.jpg");
     	GL11.glNewList(windmillList, GL11.GL_COMPILE);
     	{	
     		drawUnitWindmill();
     		drawUnitBlades();
-
-        	
-    		 
- 
     	}
     	GL11.glEndList();
-    	
+    	GL11.glNewList(planeList,GL11.GL_COMPILE);
+        {   drawUnitPlane();
+        }
+        GL11.glEndList();
+    	GL11.glDisable(GL11.GL_CULL_FACE);
+    	GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
     }
     protected void checkSceneInput()
     {//TODO: Check for keyboard and mouse input here
@@ -68,12 +75,57 @@ public class CS2150Coursework extends GraphicsLab
     {//TODO: Render your scene here - remember that a scene graph will help you write this method! 
      //      It will probably call a number of other methods you will write.
     	GL11.glTranslatef(0.0f, -0.5f, -5.0f);
-    	GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
     	GL11.glScalef(0.2f, 0.2f, 0.2f);
     //	GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-    	new Cylinder().draw(1.0f, 6.0f, 2.5f, 10, 10);
+    //	new Cylinder().draw(1.0f, 6.0f, 2.5f, 10, 10);
     	GL11.glCallList(windmillList);
-    	
+    	// draw the ground plane
+        GL11.glPushMatrix();
+        {
+        	 // disable lighting calculations so that they don't affect
+            // the appearance of the texture 
+            GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            // change the geometry colour to white so that the texture
+            // is bright and details can be seen clearly
+            Colour.WHITE.submit();
+            // enable texturing and bind an appropriate texture
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
+            
+            // position, scale and draw the ground plane using its display list
+            GL11.glTranslatef(0.0f,-1.0f,-10.0f);
+            GL11.glScalef(70.0f, 1.0f, 70.0f);
+            GL11.glCallList(planeList);
+            
+            // disable textures and reset any local lighting changes
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glPopAttrib();
+        }
+        GL11.glPopMatrix();
+        GL11.glPushMatrix();
+        {
+        	// disable lighting calculations so that they don't affect
+            // the appearance of the texture 
+            GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            // change the geometry colour to white so that the texture
+            // is bright and details can be seen clearly
+            Colour.WHITE.submit();
+            // enable texturing and bind an appropriate texture
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,skyTexture.getTextureID());
+            
+            // position, scale and draw the back plane using its display list
+            GL11.glTranslatef(0.0f,4.0f,-20.0f);
+            GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+            GL11.glScalef(25.0f, 1.0f, 10.0f);
+            GL11.glCallList(planeList);
+            
+            // disable textures and reset any local lighting changes
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glPopAttrib();
+        }
     }
     protected void setSceneCamera()
     {
@@ -125,6 +177,8 @@ public class CS2150Coursework extends GraphicsLab
 		//near left side
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
+			new Normal(v1.toVector(),v7.toVector(),v8.toVector(),v2.toVector()).submit();
+			
 			v1.submit();
 			v7.submit();
 			v8.submit();
@@ -134,6 +188,9 @@ public class CS2150Coursework extends GraphicsLab
 		
 		//near right side
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v1.toVector(),v5.toVector(),v6.toVector(),v7.toVector()).submit();
+			
 			v1.submit();
 			v5.submit();
 			v6.submit();
@@ -144,6 +201,9 @@ public class CS2150Coursework extends GraphicsLab
 		
 		//far left side
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v2.toVector(),v8.toVector(),v9.toVector(),v3.toVector()).submit();
+			
 			v2.submit();
 			v8.submit();
 			v9.submit();
@@ -153,6 +213,9 @@ public class CS2150Coursework extends GraphicsLab
 	    
 		//far right side
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v5.toVector(),v4.toVector(),v10.toVector(),v6.toVector()).submit();
+			
 			v5.submit();
 			v4.submit();
 			v10.submit();
@@ -162,6 +225,9 @@ public class CS2150Coursework extends GraphicsLab
 	    
 		//back
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v4.toVector(),v3.toVector(),v9.toVector(),v10.toVector()).submit();
+			
 			v4.submit();
 			v3.submit();
 			v9.submit();
@@ -171,6 +237,9 @@ public class CS2150Coursework extends GraphicsLab
 	    
 		//high left
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v8.toVector(),v7.toVector(),v15.toVector(),v14.toVector()).submit();
+			
 			v8.submit();
 			v7.submit();
 			v15.submit();
@@ -180,6 +249,9 @@ public class CS2150Coursework extends GraphicsLab
 	    
 		//high right
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v7.toVector(),v6.toVector(),v11.toVector(),v15.toVector()).submit();
+			
 			v7.submit();
 			v6.submit();
 			v11.submit();
@@ -189,6 +261,9 @@ public class CS2150Coursework extends GraphicsLab
 	    
 		//high far right
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v6.toVector(),v10.toVector(),v12.toVector(),v11.toVector()).submit();
+			
 			v6.submit();
 			v10.submit();
 			v12.submit();
@@ -198,6 +273,9 @@ public class CS2150Coursework extends GraphicsLab
 	    
 		//high far left
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v8.toVector(),v14.toVector(),v13.toVector(),v9.toVector()).submit();
+			
 			v8.submit();
 			v14.submit();
 			v13.submit();
@@ -207,6 +285,9 @@ public class CS2150Coursework extends GraphicsLab
 	    
 		//high back
 		GL11.glBegin(GL11.GL_POLYGON);{
+			
+			new Normal(v9.toVector(),v13.toVector(),v12.toVector(),v10.toVector()).submit();
+			
 			v9.submit();
 			v13.submit();
 			v12.submit();
@@ -216,6 +297,9 @@ public class CS2150Coursework extends GraphicsLab
 	    
 		//top near right
 		GL11.glBegin(GL11.GL_TRIANGLES);{
+			
+			new Normal(v15.toVector(),v16.toVector(),v11.toVector()).submit();
+			
 			v15.submit();
 			v16.submit();
 			v11.submit();
@@ -224,6 +308,9 @@ public class CS2150Coursework extends GraphicsLab
 		
 		//top far right		
 		GL11.glBegin(GL11.GL_TRIANGLES);{
+					
+			new Normal(v11.toVector(),v16.toVector(),v12.toVector()).submit();
+			
 					v11.submit();
 					v16.submit();
 					v12.submit();
@@ -232,6 +319,9 @@ public class CS2150Coursework extends GraphicsLab
 				
 		//top back
 		GL11.glBegin(GL11.GL_TRIANGLES);{
+					
+			new Normal(v12.toVector(),v13.toVector(),v16.toVector()).submit();
+			
 					v12.submit();
 					v13.submit();
 					v16.submit();
@@ -240,6 +330,9 @@ public class CS2150Coursework extends GraphicsLab
 			
 		//top near left
 		GL11.glBegin(GL11.GL_TRIANGLES);{
+			
+			new Normal(v15.toVector(),v14.toVector(),v16.toVector()).submit();
+				
 				v15.submit();
 				v14.submit();
 				v16.submit();
@@ -249,6 +342,9 @@ public class CS2150Coursework extends GraphicsLab
 		
 		//top far left
 		GL11.glBegin(GL11.GL_TRIANGLES);{
+			
+			new Normal(v14.toVector(),v13.toVector(),v16.toVector()).submit();
+			
 				v14.submit();
 				v13.submit();
 				v16.submit();
@@ -287,4 +383,49 @@ public class CS2150Coursework extends GraphicsLab
 		GL11.glEnd();
 	    
     }
-}
+    private void drawUnitPlane()
+    {
+        Vertex v1 = new Vertex(-0.5f, 0.0f,-0.5f); // left,  back
+        Vertex v2 = new Vertex( 0.5f, 0.0f,-0.5f); // right, back
+        Vertex v3 = new Vertex( 0.5f, 0.0f, 0.5f); // right, front
+        Vertex v4 = new Vertex(-0.5f, 0.0f, 0.5f); // left,  front
+        
+        // draw the plane geometry. order the vertices so that the plane faces up
+        GL11.glBegin(GL11.GL_POLYGON);
+        {
+            new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
+            v4.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v3.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v2.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v1.submit();
+        }
+        GL11.glEnd();
+        
+        // if the user is viewing an axis, then also draw this plane
+        // using lines so that axis aligned planes can still be seen
+        if(isViewingAxis())
+        {
+            // also disable textures when drawing as lines
+            // so that the lines can be seen more clearly
+            GL11.glPushAttrib(GL11.GL_TEXTURE_2D);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBegin(GL11.GL_LINE_LOOP);
+            {
+                v4.submit();
+                v3.submit();
+                v2.submit();
+                v1.submit();
+            }
+            GL11.glEnd();
+            GL11.glPopAttrib();
+        	}
+    	}
+    }
