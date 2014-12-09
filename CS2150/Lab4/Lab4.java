@@ -43,7 +43,7 @@ public class Lab4 extends GraphicsLab
     private float houseRotationAngle= 1.0f;
     
     public static void main(String args[])
-    {   new Lab4().run(WINDOWED,"Lab 4 - Lighting",0.1f);
+    {   new Lab4().run(WINDOWED,"Lab 4 - Lighting",0.01f);
     }
     
     protected void initScene()
