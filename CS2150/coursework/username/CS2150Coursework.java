@@ -120,30 +120,7 @@ public class CS2150Coursework extends GraphicsLab
     //	GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
     //	new Cylinder().draw(1.0f, 6.0f, 2.5f, 10, 10);
     	bladeRotationAngle += 0.5f;
-    	// draw the ground plane
-        GL11.glPushMatrix();
-        {
-        	 // disable lighting calculations so that they don't affect
-            // the appearance of the texture 
-            GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-            GL11.glDisable(GL11.GL_LIGHTING);
-            // change the geometry colour to white so that the texture
-            // is bright and details can be seen clearly
-            Colour.WHITE.submit();
-            // enable texturing and bind an appropriate texture
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
-            
-            // position, scale and draw the ground plane using its display list
-            GL11.glTranslatef(0.0f,-1.0f,-10.0f);
-            GL11.glScalef(70.0f, 1.0f, 70.0f);
-            GL11.glCallList(planeList);
-            
-            // disable textures and reset any local lighting changes
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glPopAttrib();
-        }
-        GL11.glPopMatrix();
+    	
         GL11.glPushMatrix();
         {
         	// disable lighting calculations so that they don't affect
@@ -168,45 +145,84 @@ public class CS2150Coursework extends GraphicsLab
             GL11.glPopAttrib();
         }
         GL11.glPopMatrix();
+  
+        // draw the ground plane
+        GL11.glPushMatrix();
+        {
+        	 // disable lighting calculations so that they don't affect
+            // the appearance of the texture 
+            GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            // change the geometry colour to white so that the texture
+            // is bright and details can be seen clearly
+            Colour.WHITE.submit();
+            // enable texturing and bind an appropriate texture
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
+            
+            // position, scale and draw the ground plane using its display list
+            GL11.glTranslatef(0.0f,-1.0f,-10.0f);
+            GL11.glScalef(70.0f, 1.0f, 70.0f);
+            GL11.glCallList(planeList);
+            GL11.glScalef(1/70.0f, 1/1.0f, 1/70.0f);
+            GL11.glTranslatef(0.0f, 1.0f, 10.0f);
+            
+            // disable textures and reset any local lighting changes
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glPopAttrib();
+        
+        
+        
+	        //windmill body list
+	        GL11.glPushMatrix();
+	        {
+	        	GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+	            GL11.glDisable(GL11.GL_LIGHTING);
+	            // change the geometry colour to white so that the texture
+	            // is bright and details can be seen clearly
+	        //    Colour.WHITE.submit();
+	            // enable texturing and bind an appropriate texture
+	        	GL11.glTranslatef(0.0f, -0.5f, -5.0f);
+		        GL11.glScalef(0.2f, 0.2f, 0.2f);	
+		        GL11.glCallList(windmillBodyList);
+		        
+		        GL11.glDisable(GL11.GL_TEXTURE_2D);
+	            GL11.glPopAttrib();
+        
        
-        //windmill body list
-        GL11.glPushMatrix();
-        {
-        	GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-            GL11.glDisable(GL11.GL_LIGHTING);
-            // change the geometry colour to white so that the texture
-            // is bright and details can be seen clearly
-        //    Colour.WHITE.submit();
-            // enable texturing and bind an appropriate texture
-        	GL11.glTranslatef(0.0f, -0.5f, -5.0f);
-	        GL11.glScalef(0.2f, 0.2f, 0.2f);	
-	        GL11.glCallList(windmillBodyList);
-	        
-	        GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glPopAttrib();
-        }
-        GL11.glPopMatrix();
         
-        //windmill blades list
-        GL11.glPushMatrix();
-        {
-        	GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
-            GL11.glDisable(GL11.GL_LIGHTING);
-            // change the geometry colour to white so that the texture
-            // is bright and details can be seen clearly
-        //    Colour.WHITE.submit();
-            // enable texturing and bind an appropriate texture
-
-            GL11.glTranslatef(0.0f, 0.75f, -5.0f);
-	        GL11.glScalef(0.2f, 0.2f, 0.2f);	
-	        GL11.glRotatef(bladeRotationAngle, 0.0f, 0.0f, 1.0f);
-	        GL11.glTranslatef(0.0f, -6.0f, 0.0f);
-	        GL11.glCallList(windmillBladeList);
-	        GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glPopAttrib();
-        }
+		        //windmill blades list
+		        GL11.glPushMatrix();
+		        {
+		        	GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+		            GL11.glDisable(GL11.GL_LIGHTING);
+		            // change the geometry colour to white so that the texture
+		            // is bright and details can be seen clearly
+		        //    Colour.WHITE.submit();
+		            // enable texturing and bind an appropriate texture
+		
+		            GL11.glTranslatef(0.0f, 5.3f, 4.1f);
+			        
+			        GL11.glRotatef(bladeRotationAngle, 0.0f, 0.0f, 1.0f);
+			        GL11.glCallList(windmillBladeList);
+			        GL11.glDisable(GL11.GL_TEXTURE_2D);
+		            GL11.glPopAttrib();
+		        
+		       
+		    
+		        
+			        //bird draw list
+			        GL11.glPushMatrix();
+		        	{
+		        	
+		        	
+		        	}GL11.glPopMatrix();
+		        	}
+	        	GL11.glPopMatrix();
+	        }
+        	GL11.glPopMatrix();
+        }	
         GL11.glPopMatrix();
-        
     }
     protected void setSceneCamera()
     {
@@ -492,18 +508,18 @@ public class CS2150Coursework extends GraphicsLab
     	 GL11.glEnable(GL11.GL_TEXTURE_2D);
          GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillBladeTexture.getTextureID());
     	
-    	Vertex v1 = new Vertex(-0.4f, 5.6f, 4.1f);
-    	Vertex v2 = new Vertex(0.4f, 5.6f, 4.1f);
-    	Vertex v3 = new Vertex(0.4f, 6.4f, 4.1f);
-    	Vertex v4 = new Vertex(-0.4f, 6.4f, 4.1f);
-    	Vertex v5 = new Vertex(-0.4f, 9.5f, 4.1f);
-    	Vertex v6 = new Vertex(0.4f, 9.5f, 4.1f);
-    	Vertex v7 = new Vertex(-0.4f, 2.5f, 4.1f);
-    	Vertex v8 = new Vertex(0.4f, 2.5f, 4.1f);
-    	Vertex v9 = new Vertex(3.5f, 6.4f, 4.1f);
-    	Vertex v10 = new Vertex(3.5f, 5.6f, 4.1f);
-    	Vertex v11 = new Vertex(-3.5f, 6.4f, 4.1f);
-    	Vertex v12 = new Vertex(-3.5f, 5.6f, 4.1f);
+    	Vertex v1 = new Vertex(-0.4f, -0.4f, 4.1f);
+    	Vertex v2 = new Vertex(0.4f, -0.4f, 4.1f);
+    	Vertex v3 = new Vertex(0.4f, 0.4f, 4.1f);
+    	Vertex v4 = new Vertex(-0.4f, 0.4f, 4.1f);
+    	Vertex v5 = new Vertex(-0.4f, 3.5f, 4.1f);
+    	Vertex v6 = new Vertex(0.4f, 3.5f, 4.1f);
+    	Vertex v7 = new Vertex(-0.4f, -3.5f, 4.1f);
+    	Vertex v8 = new Vertex(0.4f, -3.5f, 4.1f);
+    	Vertex v9 = new Vertex(3.5f, 0.4f, 4.1f);
+    	Vertex v10 = new Vertex(3.5f, -0.4f, 4.1f);
+    	Vertex v11 = new Vertex(-3.5f, 0.4f, 4.1f);
+    	Vertex v12 = new Vertex(-3.5f, -0.4f, 4.1f);
     	
     	//up vertical blade
     	GL11.glBegin(GL11.GL_POLYGON);
