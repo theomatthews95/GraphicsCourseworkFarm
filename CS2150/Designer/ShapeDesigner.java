@@ -40,7 +40,7 @@ public class ShapeDesigner extends AbstractDesigner {
     	GL11.glNewList(cubeList,GL11.GL_COMPILE);
         {   
         	drawUnitCube();
-        	drawUnitBlades();
+        	//drawUnitBlades();
         }
         GL11.glEndList();
         
@@ -54,201 +54,494 @@ public class ShapeDesigner extends AbstractDesigner {
     Colour near, Colour far, Colour left, Colour right, Colour top, Colour bottom*/
     private void drawUnitCube()
     {
-
-    	Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
-    	Vertex v2 = new Vertex(-3.0f, 0.0f, 2.0f);
-    	Vertex v3 = new Vertex(-1.5f, 0.0f, 4.3f);
-    	Vertex v4 = new Vertex(1.5f, 0.0f, 4.3f);
-    	Vertex v5 = new Vertex(3.0f, 0.0f, 2.0f);
-    	Vertex v6 = new Vertex(1.5f, 5.0f, 2.5f);
-    	Vertex v7 = new Vertex(0.0f, 5.0f, 1.0f);
-    	Vertex v8 = new Vertex(-1.5f, 5.0f, 2.5f);
-    	Vertex v9 = new Vertex(-0.5f, 5.0f, 4.0f);
-    	Vertex v10 = new Vertex(0.5f, 5.0f, 4.0f);
-    	Vertex v11 = new Vertex(1.5f, 7.0f, 2.5f);
-    	Vertex v12 = new Vertex(0.5f, 7.0f, 4.0f);
-    	Vertex v13 = new Vertex(-0.5f, 7.0f, 4.0f);
-    	Vertex v14 = new Vertex(-1.5f, 7.0f, 2.5f);
-    	Vertex v15 = new Vertex(0.0f, 7.0f, 1.0f);
-    	Vertex v16 = new Vertex(0.0f, 8.0f, 2.5f);
+//    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+//        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillBladeTexture.getTextureID());
+   	
+    	Vertex v1 = new Vertex(-0.4f, -0.4f, 4.1f);
+    	Vertex v2 = new Vertex(0.4f, -0.4f, 4.1f);
+    	Vertex v3 = new Vertex(0.4f, 0.4f, 4.1f);
+    	Vertex v4 = new Vertex(-0.4f, 0.4f, 4.1f);
+    	Vertex v5 = new Vertex(-0.4f, 3.5f, 4.1f);
+    	Vertex v6 = new Vertex(0.4f, 3.5f, 4.1f);
+    	Vertex v7 = new Vertex(-0.4f, -3.5f, 4.1f);
+    	Vertex v8 = new Vertex(0.4f, -3.5f, 4.1f);
+    	Vertex v9 = new Vertex(3.5f, 0.4f, 4.1f);
+    	Vertex v10 = new Vertex(3.5f, -0.4f, 4.1f);
+    	Vertex v11 = new Vertex(-3.5f, 0.4f, 4.1f);
+    	Vertex v12 = new Vertex(-3.5f, -0.4f, 4.1f);
+    	Vertex v13 = new Vertex(-0.4f, -0.4f, 3.9f);
+    	Vertex v14 = new Vertex(0.4f, -0.4f, 3.9f);
+    	Vertex v15 = new Vertex(0.4f, 0.4f, 3.9f);
+    	Vertex v16 = new Vertex(-0.4f, 0.4f, 3.9f);
+    	Vertex v17 = new Vertex(-0.4f, 3.5f, 3.9f);
+    	Vertex v18 = new Vertex(0.4f, 3.5f, 3.9f);
+    	Vertex v19 = new Vertex(-0.4f, -3.5f, 3.9f);
+    	Vertex v20= new Vertex(0.4f, -3.5f, 3.9f);
+    	Vertex v21 = new Vertex(3.5f, 0.4f, 3.9f);
+    	Vertex v22 = new Vertex(3.5f, -0.4f, 3.9f);
+    	Vertex v23 = new Vertex(-3.5f, 0.4f, 3.9f);
+    	Vertex v24 = new Vertex(-3.5f, -0.4f, 3.9f);
     	
-    	//bottom
-    	GL11.glBegin(GL11.GL_POLYGON);
-		{
-			//bottom.submit();
-			v1.submit();
-			v2.submit();
-			v3.submit();
-			v4.submit();
-			v5.submit();
-		}
-		
-		//near left side
-		GL11.glBegin(GL11.GL_POLYGON);{
-			
-			v1.submit();
-			v7.submit();
-			v8.submit();
-			v2.submit();
-			
-		}
-		
-		//near right side
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v1.submit();
-			v5.submit();
-			v6.submit();
-			v7.submit();
-		}
-		GL11.glEnd();
-	    
-		
-		//far left side
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v2.submit();
-			v8.submit();
-			v9.submit();
-			v3.submit();	
-		}
-		GL11.glEnd();
-	    
-		//far right side
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v5.submit();
-			v4.submit();
-			v10.submit();
-			v6.submit();	
-		}
-		GL11.glEnd();
-	    
-		//back
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v4.submit();
-			v3.submit();
-			v9.submit();
-			v10.submit();
-		}
-		GL11.glEnd();
-	    
-		//high left
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v8.submit();
-			v7.submit();
-			v15.submit();
-			v14.submit();
-		}
-		GL11.glEnd();
-	    
-		//high right
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v7.submit();
-			v6.submit();
-			v11.submit();
-			v15.submit();
-		}
-		GL11.glEnd();
-	    
-		//high far right
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v6.submit();
-			v10.submit();
-			v12.submit();
-			v11.submit();
-		}
-		GL11.glEnd();
-	    
-		//high far left
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v8.submit();
-			v14.submit();
-			v13.submit();
-			v9.submit();
-		}
-		GL11.glEnd();
-	    
-		//high back
-		GL11.glBegin(GL11.GL_POLYGON);{
-			v9.submit();
-			v13.submit();
-			v12.submit();
-			v10.submit();
-		}
-		GL11.glEnd();
-	    
-		//top near right
-		GL11.glBegin(GL11.GL_TRIANGLES);{
-			v15.submit();
-			v16.submit();
-			v11.submit();
-		}
-		GL11.glEnd();
-		
-		//top far right		
-		GL11.glBegin(GL11.GL_TRIANGLES);{
-					v11.submit();
-					v16.submit();
-					v12.submit();
-				}
-		GL11.glEnd();
-				
-		//top back
-		GL11.glBegin(GL11.GL_TRIANGLES);{
-					v12.submit();
-					v13.submit();
-					v16.submit();
-				}
-		GL11.glEnd();
-			
-		//top near left
-		GL11.glBegin(GL11.GL_TRIANGLES);{
-				v15.submit();
-				v14.submit();
-				v16.submit();
-			
-				}
-		GL11.glEnd();
-		
-		//top far left
-		GL11.glBegin(GL11.GL_TRIANGLES);{
-				v14.submit();
-				v13.submit();
-				v16.submit();
-				}
-		GL11.glEnd();
-	    
-    }
-
-    private void drawUnitBlades(){
-    	Vertex v1 = new Vertex(0.0f, 6.0f, 4.1f);
-    	Vertex v2 = new Vertex(0.2f, 9.5f, 4.1f);
-    	Vertex v3 = new Vertex(-0.2f, 9.5f, 4.1f);
-    	Vertex v4 = new Vertex(-0.2f, 2.5f, 4.1f);
-    	Vertex v5 = new Vertex(0.2f, 2.5f, 4.1f);
-    	Vertex v6 = new Vertex(3.5f, 6.2f, 4.1f);
-    	Vertex v7 = new Vertex(3.5f, 5.8f, 4.1f);
-    	Vertex v8 = new Vertex(-3.5f, 6.2f, 4.1f);
-    	Vertex v9 = new Vertex(-3.5f, 5.8f, 4.1f);
-    	
-    	//first vertical blade
+    	//up vertical blade
     	GL11.glBegin(GL11.GL_POLYGON);
     	{
-			v2.submit();
-			v3.submit();
-			v4.submit();
-			v5.submit();
+    		new Normal(v4.toVector(),v5.toVector(),v6.toVector(),v3.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(1.0f,0.0f);
+    		v4.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v5.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v6.submit();
+           
+            GL11.glTexCoord2f(0.0f,0.0f);
+            v3.submit();
 		}
 		GL11.glEnd();
 		
-		//second horizontal blade
+		//right horizontal blade
 		GL11.glBegin(GL11.GL_POLYGON);
     	{
-			v8.submit();
-			v9.submit();
-			v7.submit();
-			v6.submit();
+    		new Normal(v3.toVector(),v9.toVector(),v10.toVector(),v2.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(1.0f,0.0f);
+    		v3.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v9.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v10.submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
+			v2.submit();
 		}
 		GL11.glEnd();
 	    
+		
+		//down vertical blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v1.toVector(),v2.toVector(),v8.toVector(),v7.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v1.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v2.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v8.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v7.submit();
+		}
+		GL11.glEnd();
+		
+		//left horizontal blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v4.toVector(),v1.toVector(),v12.toVector(),v11.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v4.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v1.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v12.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v11.submit();
+		}
+		GL11.glEnd();
+		
+//		GL11.glEnable(GL11.GL_TEXTURE_2D);
+//         GL11.glBindTexture(GL11.GL_TEXTURE_2D,centreOfWindmillTexture.getTextureID());
+		//centre
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v4.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v3.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v2.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v1.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//rear up vertical blade
+    	GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v17.toVector(),v18.toVector(),v15.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(1.0f,0.0f);
+    		v16.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v17.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v18.submit();
+           
+            GL11.glTexCoord2f(0.0f,0.0f);
+            v15.submit();
+		}
+		GL11.glEnd();
+		
+		//rear right horizontal blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v15.toVector(),v21.toVector(),v22.toVector(),v14.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(1.0f,0.0f);
+    		v15.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v21.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v22.submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
+			v14.submit();
+		}
+		GL11.glEnd();
+	    
+		
+		//rear down vertical blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v13.toVector(),v14.toVector(),v20.toVector(),v19.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v13.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v14.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v20.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v19.submit();
+		}
+		GL11.glEnd();
+		
+		//rear left horizontal blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v13.toVector(),v24.toVector(),v23.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v16.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v13.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v24.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v23.submit();
+		}
+		GL11.glEnd();
+//		 GL11.glEnable(GL11.GL_TEXTURE_2D);
+//         GL11.glBindTexture(GL11.GL_TEXTURE_2D,centreOfWindmillTexture.getTextureID());
+		//centre
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v15.toVector(),v14.toVector(),v13.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v16.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v15.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v14.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v13.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//right far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v10.toVector(),v22.toVector(),v21.toVector(),v9.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v10.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v22.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v21.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v9.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//right up edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v15.toVector(),v3.toVector(),v9.toVector(),v21.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v15.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v3.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v9.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v21.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//right bottom edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v2.toVector(),v14.toVector(),v22.toVector(),v10.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v2.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v14.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v22.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v10.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//top top edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v17.toVector(),v5.toVector(),v6.toVector(),v18.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v17.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v5.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v6.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v18.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//top right edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v3.toVector(),v15.toVector(),v18.toVector(),v6.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v3.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v15.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v18.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v6.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//top left edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v4.toVector(),v5.toVector(),v17.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v16.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v4.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v5.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v17.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//left far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v11.toVector(),v23.toVector(),v24.toVector(),v12.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v11.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v23.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v24.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v12.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//left top edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v23.toVector(),v11.toVector(),v4.toVector(),v16.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v23.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v11.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v4.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v16.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//left bottom edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v12.toVector(),v24.toVector(),v13.toVector(),v1.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v12.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v24.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v13.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v1.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v7.toVector(),v19.toVector(),v20.toVector(),v8.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v7.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v19.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v20.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v8.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom right edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v8.toVector(),v20.toVector(),v14.toVector(),v2.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v8.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v20.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v14.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v2.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom left edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v19.toVector(),v7.toVector(),v1.toVector(),v13.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v19.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v7.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v1.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v13.submit();
+    		
+		}
+		GL11.glEnd();
     }
+	    
+    
+
+//    private void drawUnitBlades(){
+//    	Vertex v1 = new Vertex(0.0f, 6.0f, 4.1f);
+//    	Vertex v2 = new Vertex(0.2f, 9.5f, 4.1f);
+//    	Vertex v3 = new Vertex(-0.2f, 9.5f, 4.1f);
+//    	Vertex v4 = new Vertex(-0.2f, 2.5f, 4.1f);
+//    	Vertex v5 = new Vertex(0.2f, 2.5f, 4.1f);
+//    	Vertex v6 = new Vertex(3.5f, 6.2f, 4.1f);
+//    	Vertex v7 = new Vertex(3.5f, 5.8f, 4.1f);
+//    	Vertex v8 = new Vertex(-3.5f, 6.2f, 4.1f);
+//    	Vertex v9 = new Vertex(-3.5f, 5.8f, 4.1f);
+//    	
+//    	//first vertical blade
+//    	GL11.glBegin(GL11.GL_POLYGON);
+//    	{
+//			v2.submit();
+//			v3.submit();
+//			v4.submit();
+//			v5.submit();
+//		}
+//		GL11.glEnd();
+//		
+//		//second horizontal blade
+//		GL11.glBegin(GL11.GL_POLYGON);
+//    	{
+//			v8.submit();
+//			v9.submit();
+//			v7.submit();
+//			v6.submit();
+//		}
+//		GL11.glEnd();
+//	    
+//    }
     }
 

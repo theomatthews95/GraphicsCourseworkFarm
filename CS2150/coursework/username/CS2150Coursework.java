@@ -40,12 +40,11 @@ public class CS2150Coursework extends GraphicsLab
     private Texture windmillWallTexture;
     private Texture windmillBladeTexture;
     private Texture windmillTopTexture;
-    private float bladeRotationX= 0.0f;
-    private float bladeRotationY= 0.0f;
+    private Texture centreOfWindmillTexture;
     private float bladeRotationAngle = 0.0f;
 	//TODO: Feel free to change the window title and default animation scale here
     public static void main(String args[])
-    {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.1f);
+    {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.01f);
     	
     }
 
@@ -62,6 +61,7 @@ public class CS2150Coursework extends GraphicsLab
     	windmillWallTexture = loadTexture("coursework/username/textures/WindmillWallTexture.png");
     	windmillBladeTexture = loadTexture("coursework/username/textures/windmill arm.png");
     	windmillTopTexture = loadTexture("coursework/username/textures/WindmillWallWindowTexture.png");
+    	centreOfWindmillTexture = loadTexture("coursework/username/textures/CentreWindmill.png");
     	GL11.glNewList(windmillBodyList, GL11.GL_COMPILE);
     	{	
     		drawUnitWindmill();
@@ -82,28 +82,11 @@ public class CS2150Coursework extends GraphicsLab
     }
     protected void checkSceneInput()
     {//TODO: Check for keyboard and mouse input here
-    	int multiplierY = -1;
-    	int multiplierX = 1;
+    	
 //    	// Rotate if the r key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_R))
     	{
-    		bladeRotationAngle += 0.8f;
-    		
-    		
-//    	if (bladeRotationY == 9.5f) {
-//    		multiplierY = -1;
-//    	}
-//    	else if(bladeRotationY == 2.5f){
-//    		multiplierY = 1;
-//    	}
-//    	if (bladeRotationX == 3.5f) {
-//    		multiplierY = -1;
-//    	}
-//    	else if(bladeRotationX == -3.5f){
-//    		multiplierY = 1;
-//    	}
-//    	bladeRotationY += multiplierY *(0.1f * getAnimationScale());
-//    	bladeRotationX += multiplierX *(0.1f * getAnimationScale());
+    		bladeRotationAngle += -0.05f;
     	}
 
     }
@@ -119,7 +102,7 @@ public class CS2150Coursework extends GraphicsLab
     	
     //	GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
     //	new Cylinder().draw(1.0f, 6.0f, 2.5f, 10, 10);
-    	bladeRotationAngle += 0.5f;
+    	bladeRotationAngle += -0.01f;
     	
         GL11.glPushMatrix();
         {
@@ -201,7 +184,7 @@ public class CS2150Coursework extends GraphicsLab
 		        //    Colour.WHITE.submit();
 		            // enable texturing and bind an appropriate texture
 		
-		            GL11.glTranslatef(0.0f, 5.3f, 4.1f);
+		            GL11.glTranslatef(0.0f, 5.7f, 0.4f);
 			        
 			        GL11.glRotatef(bladeRotationAngle, 0.0f, 0.0f, 1.0f);
 			        GL11.glCallList(windmillBladeList);
@@ -520,6 +503,18 @@ public class CS2150Coursework extends GraphicsLab
     	Vertex v10 = new Vertex(3.5f, -0.4f, 4.1f);
     	Vertex v11 = new Vertex(-3.5f, 0.4f, 4.1f);
     	Vertex v12 = new Vertex(-3.5f, -0.4f, 4.1f);
+    	Vertex v13 = new Vertex(-0.4f, -0.4f, 3.9f);
+    	Vertex v14 = new Vertex(0.4f, -0.4f, 3.9f);
+    	Vertex v15 = new Vertex(0.4f, 0.4f, 3.9f);
+    	Vertex v16 = new Vertex(-0.4f, 0.4f, 3.9f);
+    	Vertex v17 = new Vertex(-0.4f, 3.5f, 3.9f);
+    	Vertex v18 = new Vertex(0.4f, 3.5f, 3.9f);
+    	Vertex v19 = new Vertex(-0.4f, -3.5f, 3.9f);
+    	Vertex v20= new Vertex(0.4f, -3.5f, 3.9f);
+    	Vertex v21 = new Vertex(3.5f, 0.4f, 3.9f);
+    	Vertex v22 = new Vertex(3.5f, -0.4f, 3.9f);
+    	Vertex v23 = new Vertex(-3.5f, 0.4f, 3.9f);
+    	Vertex v24 = new Vertex(-3.5f, -0.4f, 3.9f);
     	
     	//up vertical blade
     	GL11.glBegin(GL11.GL_POLYGON);
@@ -598,15 +593,352 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+         GL11.glBindTexture(GL11.GL_TEXTURE_2D,centreOfWindmillTexture.getTextureID());
 		//centre
 		GL11.glBegin(GL11.GL_POLYGON);
     	{
     		new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
-    		
+    		GL11.glTexCoord2f(0.0f,0.0f);
     		v4.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
             v3.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
             v2.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
 			v1.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//rear up vertical blade
+    	GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v17.toVector(),v18.toVector(),v15.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(1.0f,0.0f);
+    		v16.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v17.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v18.submit();
+           
+            GL11.glTexCoord2f(0.0f,0.0f);
+            v15.submit();
+		}
+		GL11.glEnd();
+		
+		//rear right horizontal blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v15.toVector(),v21.toVector(),v22.toVector(),v14.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(1.0f,0.0f);
+    		v15.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v21.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v22.submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
+			v14.submit();
+		}
+		GL11.glEnd();
+	    
+		
+		//rear down vertical blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v13.toVector(),v14.toVector(),v20.toVector(),v19.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v13.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v14.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v20.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v19.submit();
+		}
+		GL11.glEnd();
+		
+		//rear left horizontal blade
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v13.toVector(),v24.toVector(),v23.toVector()).submit();
+    		
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v16.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v13.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v24.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v23.submit();
+		}
+		GL11.glEnd();
+		 GL11.glEnable(GL11.GL_TEXTURE_2D);
+         GL11.glBindTexture(GL11.GL_TEXTURE_2D,centreOfWindmillTexture.getTextureID());
+		//centre
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v15.toVector(),v14.toVector(),v13.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v16.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v15.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v14.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v13.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//right far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v10.toVector(),v22.toVector(),v21.toVector(),v9.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v10.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v22.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v21.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v9.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//right up edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v15.toVector(),v3.toVector(),v9.toVector(),v21.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v15.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v3.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v9.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v21.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//right bottom edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v2.toVector(),v14.toVector(),v22.toVector(),v10.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v2.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v14.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v22.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v10.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//top top edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v17.toVector(),v5.toVector(),v6.toVector(),v18.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v17.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v5.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v6.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v18.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//top right edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v3.toVector(),v15.toVector(),v18.toVector(),v6.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v3.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v15.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v18.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v6.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//top left edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v4.toVector(),v5.toVector(),v17.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v16.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v4.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v5.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v17.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//left far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v11.toVector(),v23.toVector(),v24.toVector(),v12.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v11.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v23.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v24.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v12.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//left top edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v23.toVector(),v11.toVector(),v4.toVector(),v16.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v23.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v11.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v4.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v16.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//left bottom edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v12.toVector(),v24.toVector(),v13.toVector(),v1.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v12.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v24.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v13.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v1.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v7.toVector(),v19.toVector(),v20.toVector(),v8.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v7.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v19.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v20.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v8.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom right edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v8.toVector(),v20.toVector(),v14.toVector(),v2.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v8.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v20.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v14.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v2.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom left edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v19.toVector(),v7.toVector(),v1.toVector(),v13.toVector()).submit();
+    		GL11.glTexCoord2f(0.0f,0.0f);
+    		v19.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v7.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v1.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+			v13.submit();
+    		
 		}
 		GL11.glEnd();
     }
@@ -622,16 +954,16 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
             
-            GL11.glTexCoord2f(0.0f,0.0f);
+            GL11.glTexCoord2f(1.0f,0.0f);
             v4.submit();
             
-            GL11.glTexCoord2f(1.0f,0.0f);
+            GL11.glTexCoord2f(0.0f,0.0f);
             v3.submit();
             
-            GL11.glTexCoord2f(1.0f,1.0f);
+            GL11.glTexCoord2f(0.0f,1.0f);
             v2.submit();
             
-            GL11.glTexCoord2f(0.0f,1.0f);
+            GL11.glTexCoord2f(1.0f,1.0f);
             v1.submit();
         }
         GL11.glEnd();
