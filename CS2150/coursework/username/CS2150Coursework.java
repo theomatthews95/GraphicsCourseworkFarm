@@ -42,9 +42,10 @@ public class CS2150Coursework extends GraphicsLab
     private Texture windmillTopTexture;
     private float bladeRotationX= 0.0f;
     private float bladeRotationY= 0.0f;
+    private float bladeRotationAngle = 0.0f;
 	//TODO: Feel free to change the window title and default animation scale here
     public static void main(String args[])
-    {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.01f);
+    {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.1f);
     	
     }
 
@@ -86,22 +87,23 @@ public class CS2150Coursework extends GraphicsLab
 //    	// Rotate if the r key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_R))
     	{
+    		bladeRotationAngle += 0.8f;
     		
     		
-    	if (bladeRotationY == 9.5f) {
-    		multiplierY = -1;
-    	}
-    	else if(bladeRotationY == 2.5f){
-    		multiplierY = 1;
-    	}
-    	if (bladeRotationX == 3.5f) {
-    		multiplierY = -1;
-    	}
-    	else if(bladeRotationX == -3.5f){
-    		multiplierY = 1;
-    	}
-    	bladeRotationY += multiplierY *(0.1f * getAnimationScale());
-    	bladeRotationX += multiplierX *(0.1f * getAnimationScale());
+//    	if (bladeRotationY == 9.5f) {
+//    		multiplierY = -1;
+//    	}
+//    	else if(bladeRotationY == 2.5f){
+//    		multiplierY = 1;
+//    	}
+//    	if (bladeRotationX == 3.5f) {
+//    		multiplierY = -1;
+//    	}
+//    	else if(bladeRotationX == -3.5f){
+//    		multiplierY = 1;
+//    	}
+//    	bladeRotationY += multiplierY *(0.1f * getAnimationScale());
+//    	bladeRotationX += multiplierX *(0.1f * getAnimationScale());
     	}
 
     }
@@ -117,7 +119,7 @@ public class CS2150Coursework extends GraphicsLab
     	
     //	GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
     //	new Cylinder().draw(1.0f, 6.0f, 2.5f, 10, 10);
-    	
+    	bladeRotationAngle += 0.5f;
     	// draw the ground plane
         GL11.glPushMatrix();
         {
@@ -194,10 +196,11 @@ public class CS2150Coursework extends GraphicsLab
             // is bright and details can be seen clearly
         //    Colour.WHITE.submit();
             // enable texturing and bind an appropriate texture
-        	GL11.glTranslatef(0.0f, -0.5f, -5.0f);
+
+            GL11.glTranslatef(0.0f, 0.75f, -5.0f);
 	        GL11.glScalef(0.2f, 0.2f, 0.2f);	
-	        //bladeRotationAngle
-	        GL11.glTranslatef(bladeRotationX, bladeRotationY, 0.0f);
+	        GL11.glRotatef(bladeRotationAngle, 0.0f, 0.0f, 1.0f);
+	        GL11.glTranslatef(0.0f, -6.0f, 0.0f);
 	        GL11.glCallList(windmillBladeList);
 	        GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glPopAttrib();
