@@ -41,6 +41,7 @@ public class CS2150Coursework extends GraphicsLab
     private Texture windmillBladeTexture;
     private Texture windmillTopTexture;
     private Texture centreOfWindmillTexture;
+    private Texture windmillBackTexture;
     private float bladeRotationAngle = 0.0f;
 	//TODO: Feel free to change the window title and default animation scale here
     public static void main(String args[])
@@ -62,6 +63,7 @@ public class CS2150Coursework extends GraphicsLab
     	windmillBladeTexture = loadTexture("coursework/username/textures/windmill arm.png");
     	windmillTopTexture = loadTexture("coursework/username/textures/WindmillWallWindowTexture.png");
     	centreOfWindmillTexture = loadTexture("coursework/username/textures/CentreWindmill.png");
+    	windmillBackTexture = loadTexture("coursework/username/textures/wallWithDoor.png");
     	GL11.glNewList(windmillBodyList, GL11.GL_COMPILE);
     	{	
     		drawUnitWindmill();
@@ -87,6 +89,9 @@ public class CS2150Coursework extends GraphicsLab
     	if(Keyboard.isKeyDown(Keyboard.KEY_R))
     	{
     		bladeRotationAngle += -0.05f;
+    		if (bladeRotationAngle < -360.0f) // Wrap the angle back around into 0-360 degrees.
+            {  bladeRotationAngle = 0.0f;
+            }
     	}
 
     }
@@ -103,7 +108,7 @@ public class CS2150Coursework extends GraphicsLab
     //	GL11.glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
     //	new Cylinder().draw(1.0f, 6.0f, 2.5f, 10, 10);
     	bladeRotationAngle += -0.01f;
-    	
+    	//draw the sky plane
         GL11.glPushMatrix();
         {
         	// disable lighting calculations so that they don't affect
@@ -165,7 +170,8 @@ public class CS2150Coursework extends GraphicsLab
 	            // is bright and details can be seen clearly
 	        //    Colour.WHITE.submit();
 	            // enable texturing and bind an appropriate texture
-	        	GL11.glTranslatef(0.0f, -0.5f, -5.0f);
+	        	GL11.glTranslatef(-2.0f, -0.5f, -5.0f);
+	        	GL11.glRotatef(40.0f, 0.0f, 1.0f, 0.0f);
 		        GL11.glScalef(0.2f, 0.2f, 0.2f);	
 		        GL11.glCallList(windmillBodyList);
 		        
@@ -328,6 +334,8 @@ public class CS2150Coursework extends GraphicsLab
 		GL11.glEnd();
 	    
 		//back
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillBackTexture.getTextureID());
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
 			new Normal(v4.toVector(),v3.toVector(),v9.toVector(),v10.toVector()).submit();
@@ -345,7 +353,9 @@ public class CS2150Coursework extends GraphicsLab
 			v10.submit();
 		}
 		GL11.glEnd();
-	    
+
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillTopTexture.getTextureID());
 		//high left
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
@@ -370,8 +380,6 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 		
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillTopTexture.getTextureID());
 		
         //high far right
 		GL11.glBegin(GL11.GL_POLYGON);{
@@ -967,6 +975,47 @@ public class CS2150Coursework extends GraphicsLab
             v1.submit();
         }
         GL11.glEnd();
+    }
+    
+    private void drawUnitBird(){
+    	Vertex v38 = new Vertex(0.0f, 0.0f,0.0f);
+    	Vertex v37 = new Vertex(0.2f, 0.0f,0.0f);
+    	Vertex v36 = new Vertex(0.2f, 0.0f,0.2f);
+    	Vertex v35 = new Vertex(0.0f, 0.2f,0.2f);
+    	Vertex v34 = new Vertex(0.0f, 0.8f,0.2f);
+    	Vertex v33 = new Vertex(0.0f, 0.8f,0.0f);
+    	Vertex v32 = new Vertex(0.2f, 0.8f,0.0f);
+    	Vertex v31 = new Vertex(0.2f, 0.8f,0.2f);
+    	Vertex v12 = new Vertex(0.6f, 0.8f,0.4f);
+    	Vertex v7 = new Vertex(-0.2f, 0.8f,0.4f);
+    	Vertex v10 = new Vertex(-0.2f, 0.8f,-0.2f);
+    	Vertex v11 = new Vertex(0.6f, 0.8f,-0.2f);
+    	Vertex v14 = new Vertex(0.6f, 1.8f,-0.2f);
+    	Vertex v9 = new Vertex(-0.2f, 1.8f,0.4f);
+    	Vertex v8 = new Vertex(-0.2f, 1.8f,0.4f);
+    	Vertex v13 = new Vertex(0.6f, 1.8f,0.4f);
+    	Vertex v6 = new Vertex(-0.4f, 1.8f,0.4f);
+    	Vertex v5 = new Vertex(-0.4f, 1.8f,-0.2f);
+    	
+    	GL11.glBegin(GL11.GL_POLYGON);
+        {
+            new Normal(v38.toVector(),v35.toVector(),v36.toVector(),v37.toVector()).submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v38.submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
+            v35.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v36.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v37.submit();
+        }
+        GL11.glEnd();
+    	
+    }
         
 //        // if the user is viewing an axis, then also draw this plane
 //        // using lines so that axis aligned planes can still be seen
@@ -986,5 +1035,5 @@ public class CS2150Coursework extends GraphicsLab
 //            GL11.glEnd();
 //            GL11.glPopAttrib();
 //        	}
-    	}
+    	
     }
