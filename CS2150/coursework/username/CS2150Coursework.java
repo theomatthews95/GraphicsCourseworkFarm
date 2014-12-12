@@ -4,13 +4,34 @@
  * Scene Graph:
  *  Scene origin
  *  |
+ *	+--[Ry(groundRotationAngle) T(0, groundVerticalValue, groundForwardValue)] Ground Plane
+ *		|
+ *		+--[T(0,0,-20) Rx(90) S(50,2,20)] Front Sky plane
+ *		|
+ *		+--[T(20,0,0) Rx(90) Rz(90) S(50,2,20)] Right sky plane
+ *		|
+ *		+--[T(-20,0,0) Rx(90) Rz(270) S(50,2,20)] Left sky plane
+ *		|
+ *		+--[T(20,0,0) Rx(90) Rz(180) S(50,2,20)] Back sky plane
+ *		|
+ *		+--[T(20,0,0) Rx(180) S(50,2,100)] Top sky plane
+ *		| 
+ *		+--[T(0,0,-10) S(150,1,70) S(1/150,1,1/70) T(0,0,10)] Ground plane
+ *			| 
+ *			+--[S(0.5,0.5,0.5)] Windmill body
+ *				| 
+ *				+--[T(0.1,-4.1,5.8) Rx(270) T(0,5.7,1) Rz(bladeRotationAngle)] Windmill blades
+ *					|
+ *					+--[T(0.4,3,4.1) Rz(270) Ry(90) S(0.5, 0.5, 0.5)] Bird body
+ *						|
+ *						+--[T(0.4,1.2,-0.2) Ry(180) Rx(wingRotationAngle)] Bird's right wing
+ *						|
+ *						+--[T(-0.1,1.2,0.4) Rx(wingRotationAngle)] Bird's left wing
  *
- *  TODO: Provide a scene graph for your submission
  */
 package coursework.username;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.Cylinder;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.input.Keyboard;
 import org.newdawn.slick.opengl.Texture;
@@ -47,9 +68,17 @@ public class CS2150Coursework extends GraphicsLab
     private Texture windmillRoofTexture;
     private Texture chickenLegsTexture;
     private Texture featheredTexture;
+    private Texture skyRoof;
+    private Texture windmillPinTexture;
+    private Texture birdFace;
+    private Texture birdHead;
     private float bladeRotationAngle = 0.0f;
     private float wingRotationAngle = 0.0f;
-	//TODO: Feel free to change the window title and default animation scale here
+    private float groundRotationAngle = 45.0f;
+    private float groundForwardValue = 0.0f;
+    private float groundVerticalValue = 0.0f;
+	
+    
     public static void main(String args[])
     {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.01f);
     	
@@ -57,25 +86,58 @@ public class CS2150Coursework extends GraphicsLab
 
     protected void initScene() throws Exception
     {//TODO: Initialise your resources here - might well call other methods you write.
- 
+    	
+    	float globalAmbient[] = {0.5f, 0.5f, 0.5f, 1.0f};
+    	 
+        // the first light for the scene is white...
+        float diffuse0[]  = { 0.6f,  0.6f, 0.6f, 1.0f};
+        // ...with a dim ambient contribution...
+        float ambient0[]  = { 0.6f,  0.6f, 0.6f, 1.0f};
+        // ...and is positioned above and behind the viewpoint
+        float position0[] = { 0.0f, 10.0f, 010.0f, 1.0f}; 
+
+        // supply OpenGL with the properties for the first light
+        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient0));
+        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, FloatBuffer.wrap(diffuse0));
+  		GL11.glLight(GL11.GL_LIGHT0, GL11.GL_SPECULAR, FloatBuffer.wrap(diffuse0));
+        GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, FloatBuffer.wrap(position0));
+        // enable the first light
+        GL11.glEnable(GL11.GL_LIGHT0);
+    	// set the global ambient lighting
+    	GL11.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, FloatBuffer.wrap(globalAmbient));
+    	// enable lighting calculations
+    	GL11.glEnable(GL11.GL_LIGHTING);
+    	// ensure that all normals are automatically re-normalised
+    	// after transformations
+    	GL11.glEnable(GL11.GL_NORMALIZE);
+
         
-    	groundTexture = loadTexture("coursework/username/textures/golf_course.jpg");
+    	groundTexture = loadTexture("coursework/username/textures/Grass.jpg");
     	skyTexture = loadTexture("coursework/username/textures/sky.png");
     	windmillWallTexture = loadTexture("coursework/username/textures/WindmillWallTexture.png");
     	windmillBladeTexture = loadTexture("coursework/username/textures/windmill arm.png");
     	windmillTopTexture = loadTexture("coursework/username/textures/WindmillWallWindowTexture.png");
     	centreOfWindmillTexture = loadTexture("coursework/username/textures/CentreWindmill.png");
     	windmillBackTexture = loadTexture("coursework/username/textures/wallWithDoor.png");
-    	windmillRoofTexture = loadTexture("coursework/username/textures/WindmillRood.jpg");
+    	windmillRoofTexture = loadTexture("coursework/username/textures/WindmillRoof.jpg");
     	chickenLegsTexture = loadTexture("coursework/username/textures/ChickenLegs.png");
     	featheredTexture = loadTexture("coursework/username/textures/featherTexture.jpg");
+    	skyRoof = loadTexture("coursework/username/textures/SkyRoof.png");
+    	windmillPinTexture = loadTexture("coursework/username/textures/pinTexture.png");
+    	birdFace = loadTexture("coursework/username/textures/birdFace.png");
+    	birdHead = loadTexture("coursework/username/textures/birdHead.png");
     	GL11.glNewList(windmillBodyList, GL11.GL_COMPILE);
     	{	
     		drawUnitWindmill();
+
+    		GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+    		GL11.glTranslatef(-0.1f, 3.8f, -5.8f);
+    		drawUnitWindmillPin();
     	}
     	GL11.glEndList();
     	GL11.glNewList(windmillBladeList, GL11.GL_COMPILE);
     	{
+    		
     		drawUnitBlades();
     	}
     	GL11.glEndList();
@@ -86,7 +148,7 @@ public class CS2150Coursework extends GraphicsLab
         GL11.glEndList();
         GL11.glNewList(birdBodyList,GL11.GL_COMPILE);
         {  
-        	drawUnitBirdBody(Colour.WHITE, Colour.YELLOW);
+        	drawUnitBirdBody();
         }
         GL11.glEndList();
         GL11.glNewList(birdWingsList, GL11.GL_COMPILE);
@@ -110,12 +172,57 @@ public class CS2150Coursework extends GraphicsLab
     	}
     	if(Keyboard.isKeyDown(Keyboard.KEY_F))
     			{
-    		wingRotationAngle += 0.1f;
-    		if (wingRotationAngle > 45.0f) // Wrap the angle back around into 0-360 degrees.
-            {  wingRotationAngle = -45.0f;
+    		wingRotationAngle += -0.1f;
+    		if (wingRotationAngle < -45.0f) // Wrap the angle back around into 0-360 degrees.
+            {  wingRotationAngle = 45.0f;
             }
     		
     			}
+    	if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
+    	{
+    		groundRotationAngle += 0.01f;
+    		
+    	}
+    	if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
+    	{
+    		groundRotationAngle += -0.01f;
+    		
+    	}
+    	if(Keyboard.isKeyDown(Keyboard.KEY_UP))
+    	{
+    		if(groundForwardValue > 8.0f){groundForwardValue += 0.0f;}else{
+        	groundForwardValue += 0.001f;}
+    		
+    	}
+    	if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
+    	{
+    		if(groundForwardValue < -8.0f){groundForwardValue += 0.0f;}else{
+        	groundForwardValue += -0.001f;}
+    		
+    	}
+    	if(Keyboard.isKeyDown(Keyboard.KEY_U))
+    	{
+    		if(groundVerticalValue < -5.0f){groundVerticalValue += 0.0f;}else{
+
+        		groundVerticalValue += -0.001f;}
+    		
+    	}
+    	if(Keyboard.isKeyDown(Keyboard.KEY_D))
+    	{
+    		if(groundVerticalValue > 2.5f){groundVerticalValue += 0.0f;}else{
+    			groundVerticalValue += 0.001f;}
+    		
+    	}
+    	if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+    	
+    	   groundRotationAngle = 0.0f;
+    	   groundForwardValue = 0.0f;
+    	   groundVerticalValue = 0.0f;
+    	   bladeRotationAngle = 0.0f;
+    	   wingRotationAngle = 0.0f;
+    		
+    	}
+    	
     }
     protected void updateScene()
     {
@@ -126,128 +233,236 @@ public class CS2150Coursework extends GraphicsLab
     protected void renderScene()
     {//TODO: Render your scene here - remember that a scene graph will help you write this method! 
      //      It will probably call a number of other methods you will write.
-    	//bladeRotationAngle += -0.01f;
-    	//draw the sky plane
-        GL11.glPushMatrix();
-        {
-        	
-            // enable texturing and bind an appropriate texture
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D,skyTexture.getTextureID());
-            
-            // position, scale and draw the back plane using its display list
-            GL11.glTranslatef(0.0f,4.0f,-20.0f);
-            GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-            GL11.glScalef(25.0f, 1.0f, 10.0f);
-            GL11.glCallList(planeList);
-            
-            // disable textures and reset any local lighting changes
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glPopAttrib();
-        }
-        GL11.glPopMatrix();
-  
-        // draw the ground plane
-        GL11.glPushMatrix();
-        {
-        	
-            // enable texturing and bind an appropriate texture
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
-            
-            // position, scale and draw the ground plane using its display list
-            GL11.glTranslatef(0.0f,-1.0f,-10.0f);
-            GL11.glScalef(70.0f, 1.0f, 70.0f);
-            GL11.glCallList(planeList);
-            GL11.glScalef(1/70.0f, 1/1.0f, 1/70.0f);
-            GL11.glTranslatef(0.0f, 1.0f, 10.0f);
-            
-            // disable textures and reset any local lighting changes
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glPopAttrib();
-        
-        
-        
-	        //windmill body list
+    	bladeRotationAngle += -0.03f;
+    	
+    	//whole scene
+    	GL11.glPushMatrix();{
+      	  GL11.glRotatef(groundRotationAngle, 0.0f, 1.0f, 0.0f);
+      	 
+      	  GL11.glTranslatef(0.0f,groundVerticalValue,groundForwardValue);
+      	//draw the back sky plane
+	    	GL11.glPushMatrix();
+	        {
+	        	
+	            // enable texturing and bind an appropriate texture
+	            GL11.glEnable(GL11.GL_TEXTURE_2D);
+	            GL11.glBindTexture(GL11.GL_TEXTURE_2D,skyTexture.getTextureID());
+	            
+	            // position, scale and draw the back plane using its display list
+	            GL11.glTranslatef(0.0f,0.0f,-20.0f);
+	            GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	            GL11.glScalef(50.0f, 2.0f, 20.0f);
+	            GL11.glCallList(planeList);
+	            
+	            // disable textures and reset any local lighting changes
+	            GL11.glDisable(GL11.GL_TEXTURE_2D);
+	            GL11.glPopAttrib();
+	        }
+	        GL11.glPopMatrix();
+	    	
+	        //draw right sky plane
 	        GL11.glPushMatrix();
 	        {
 	        	
 	            // enable texturing and bind an appropriate texture
-	        	GL11.glTranslatef(-2.0f, -0.5f, -5.0f);
-	        	GL11.glRotatef(40.0f, 0.0f, 1.0f, 0.0f);
-	           
-		        GL11.glScalef(0.2f, 0.2f, 0.2f);	
-		        GL11.glCallList(windmillBodyList);
-		        
-		        GL11.glDisable(GL11.GL_TEXTURE_2D);
+	            GL11.glEnable(GL11.GL_TEXTURE_2D);
+	            GL11.glBindTexture(GL11.GL_TEXTURE_2D,skyTexture.getTextureID());
+	            
+	            // position, scale and draw the back plane using its display list
+	            GL11.glTranslatef(20.0f,0.0f,0.0f);
+	            GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	            GL11.glRotatef(90.0f, 0.0f, 0.0f, 1.0f);
+	            GL11.glScalef(50.0f, 2.0f, 20.0f);
+	            GL11.glCallList(planeList);
+	            
+	            // disable textures and reset any local lighting changes
+	            GL11.glDisable(GL11.GL_TEXTURE_2D);
 	            GL11.glPopAttrib();
-        
-       
-        
-		        //windmill blades list
+	        }
+	        GL11.glPopMatrix();
+	      //draw left sky plane
+	        GL11.glPushMatrix();
+	        {
+	        	
+	            // enable texturing and bind an appropriate texture
+	            GL11.glEnable(GL11.GL_TEXTURE_2D);
+	            GL11.glBindTexture(GL11.GL_TEXTURE_2D,skyTexture.getTextureID());
+	       
+	            // position, scale and draw the back plane using its display list
+	            GL11.glTranslatef(-20.0f,0.0f,0.0f);
+	            GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	            GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
+	            GL11.glScalef(50.0f, 2.0f, 20.0f);
+	            GL11.glCallList(planeList);
+	            
+	            // disable textures and reset any local lighting changes
+	            GL11.glDisable(GL11.GL_TEXTURE_2D);
+	            GL11.glPopAttrib();
+	        }
+	        GL11.glPopMatrix();
+	        
+	        //draw back sky plane
+	        GL11.glPushMatrix();
+	        {
+	        	
+	            // enable texturing and bind an appropriate texture
+	            GL11.glEnable(GL11.GL_TEXTURE_2D);
+	            GL11.glBindTexture(GL11.GL_TEXTURE_2D,skyTexture.getTextureID());
+	            
+	            // position, scale and draw the back plane using its display list
+	            GL11.glTranslatef(0.0f,0.0f,20.0f);
+	            GL11.glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+	            GL11.glRotatef(180.0f, 0.0f, 0.0f, 1.0f);
+	            GL11.glScalef(50.0f, 2.0f, 20.0f);
+	            GL11.glCallList(planeList);
+	            
+	            // disable textures and reset any local lighting changes
+	            GL11.glDisable(GL11.GL_TEXTURE_2D);
+	            GL11.glPopAttrib();
+	        }
+	        GL11.glPopMatrix();
+	        
+	        //draw top sky plane
+	        GL11.glPushMatrix();
+	        {
+	        	
+	            // enable texturing and bind an appropriate texture
+	            GL11.glEnable(GL11.GL_TEXTURE_2D);
+	            GL11.glBindTexture(GL11.GL_TEXTURE_2D,skyRoof.getTextureID());
+	            
+	            // position, scale and draw the back plane using its display list
+	            GL11.glTranslatef(0.0f,10.0f,0.0f);
+	            GL11.glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
+	           
+	            GL11.glScalef(50.0f, 2.0f, 100.0f);
+	            GL11.glCallList(planeList);
+	            
+	            // disable textures and reset any local lighting changes
+	            GL11.glDisable(GL11.GL_TEXTURE_2D);
+	            GL11.glPopAttrib();
+	        }
+	        GL11.glPopMatrix();
+	        // draw the ground plane
+	        GL11.glPushMatrix();
+	        {
+	        	
+	            // enable texturing and bind an appropriate texture
+	            GL11.glEnable(GL11.GL_TEXTURE_2D);
+	            GL11.glBindTexture(GL11.GL_TEXTURE_2D,groundTexture.getTextureID());
+	            
+	            // position, scale and draw the ground plane using its display list
+	            GL11.glTranslatef(0.0f,0.0f,-10.0f);
+	            GL11.glScalef(150.0f, 1.0f, 70.0f);
+	            GL11.glCallList(planeList);
+	            GL11.glScalef(1/150.0f, 1.0f, 1/70.0f);
+	            GL11.glTranslatef(0.0f, 0.0f, 10.0f);
+	            
+	            // disable textures and reset any local lighting changes
+	            GL11.glDisable(GL11.GL_TEXTURE_2D);
+	            GL11.glPopAttrib();
+	        
+	        
+	        
+		        //windmill body list
 		        GL11.glPushMatrix();
 		        {
 		        	
-            // enable texturing and bind an appropriate texture
-		
-		            GL11.glTranslatef(0.0f, 5.7f, 0.4f);
-			        
-			        GL11.glRotatef(bladeRotationAngle, 0.0f, 0.0f, 1.0f);
-			        GL11.glCallList(windmillBladeList);
+		            // enable texturing and bind an appropriate texture
+		        	GL11.glEnable(GL11.GL_TEXTURE_2D);
+		            GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
+			        GL11.glScalef(0.5f, 0.5f, 0.5f);	
+			        GL11.glCallList(windmillBodyList);
+	
 			        GL11.glDisable(GL11.GL_TEXTURE_2D);
 		            GL11.glPopAttrib();
-		        
-		       
-		    
-		        
-			        //bird draw list
+	        
+	       
+	        
+			        //windmill blades list
 			        GL11.glPushMatrix();
-		        	{
-		        		
-		        		GL11.glTranslatef(0.4f, 3.0f, 4.1f);
-		        		GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
-		        		GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-		        		GL11.glScalef(0.5f, 0.5f, 0.5f);
-		        	    GL11.glCallList(birdBodyList);
-		        	
-		        	    //DRAW right wing
-		        	    GL11.glPushMatrix();
-		        	    	{	
-		        	    		
-		    		            GL11.glEnable(GL11.GL_TEXTURE_2D);
-		    		            GL11.glBindTexture(GL11.GL_TEXTURE_2D, featheredTexture.getTextureID());
-		    		          
-		        	         GL11.glTranslatef(0.4f, 1.2f, -0.2f);
-		        	    		GL11.glRotatef(180.0F, 0.0f, 1.0f, 0.0f);
-		        	    		
-		        	    		GL11.glRotatef(wingRotationAngle, 1.0f, 0.0f, 0.0f);
-		        	    		
-		        	    		GL11.glCallList(birdWingsList);
-		        	    	}
-		        	    GL11.glPopMatrix();
-		        	
-		        	    //draw left wing
-		        	    GL11.glPushMatrix();
-		        	    {		
-		        	    	
-				            GL11.glEnable(GL11.GL_TEXTURE_2D);
-				            GL11.glBindTexture(GL11.GL_TEXTURE_2D, featheredTexture.getTextureID());
-				          
-		        	    		GL11.glTranslatef(-0.1f, 1.2f, 0.4f);
-		        	    		GL11.glRotatef(wingRotationAngle, 1.0f, 0.0f, 0.0f);
-		        	    		
-		        	    		GL11.glCallList(birdWingsList);
-		        	    }
-		        	    GL11.glPopMatrix();
-		        		}
+			        {
+			        	 // how shiny are the blades (specular exponent)
+			            float bladeFrontShininess  = 100.0f;
+			            // specular reflection of the blades
+			            float bladeFrontSpecular[] = {100.8f, 100.8f, 100.8f, 1.0f};
+			            // diffuse reflection of the blades
+			            float bladeFrontDiffuse[]  = {0.8f, 0.8f, 0.8f, 1.0f};
+			            
+			            // set the material properties for the house using OpenGL
+			            GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, bladeFrontShininess);
+			            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_SPECULAR, FloatBuffer.wrap(bladeFrontSpecular));
+			            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(bladeFrontDiffuse));
+			            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(bladeFrontDiffuse));
+	
+	            // enable texturing and bind an appropriate texture
+			            GL11.glTranslatef(0.1f, -4.1f, 5.8f);
+			            GL11.glRotatef(270.0f, 1.0f, 0.0f, 0.0f);
+			            GL11.glTranslatef(0.0f, 5.7f, 1.0f);
+	
+				       
+				        GL11.glRotatef(bladeRotationAngle, 0.0f, 0.0f, 1.0f);
+				        GL11.glCallList(windmillBladeList);
+				        GL11.glDisable(GL11.GL_TEXTURE_2D);
+			            GL11.glPopAttrib();
+			        
+			       
+			    
+			        
+				        //bird draw list
+				        GL11.glPushMatrix();
+			        	{
+			        		
+			        		GL11.glTranslatef(0.4f, 3.0f, 4.1f);
+			        		GL11.glRotatef(270.0f, 0.0f, 0.0f, 1.0f);
+			        		GL11.glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
+			        		GL11.glScalef(0.5f, 0.5f, 0.5f);
+			        	    GL11.glCallList(birdBodyList);
+			        	
+			        	    //Draw right wing
+			        	    GL11.glPushMatrix();
+			        	    	{	
+			        	    		GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			        	            GL11.glDisable(GL11.GL_LIGHTING);
+			    		            GL11.glEnable(GL11.GL_TEXTURE_2D);
+			    		            GL11.glBindTexture(GL11.GL_TEXTURE_2D, featheredTexture.getTextureID());
+			    		          
+			        	         GL11.glTranslatef(0.4f, 1.2f, -0.2f);
+			        	    		GL11.glRotatef(180.0F, 0.0f, 1.0f, 0.0f);
+			        	    		
+			        	    		GL11.glRotatef(wingRotationAngle, 1.0f, 0.0f, 0.0f);
+			        	    		
+			        	    		GL11.glCallList(birdWingsList);
+			        	    		 GL11.glDisable(GL11.GL_TEXTURE_2D);
+			        	             GL11.glPopAttrib();
+			        	    	}
+			        	    GL11.glPopMatrix();
+			        	
+			        	    //draw left wing
+			        	    GL11.glPushMatrix();
+			        	    {		
+			        	    	GL11.glPushAttrib(GL11.GL_LIGHTING_BIT);
+			                    GL11.glDisable(GL11.GL_LIGHTING);
+					            GL11.glEnable(GL11.GL_TEXTURE_2D);
+					            GL11.glBindTexture(GL11.GL_TEXTURE_2D, featheredTexture.getTextureID());
+					          
+			        	    		GL11.glTranslatef(-0.1f, 1.2f, 0.4f);
+			        	    		GL11.glRotatef(wingRotationAngle, 1.0f, 0.0f, 0.0f);
+			        	    		
+			        	    		GL11.glCallList(birdWingsList);
+			        	    		 GL11.glDisable(GL11.GL_TEXTURE_2D);
+			        	             GL11.glPopAttrib();
+			        	    }
+			        	    GL11.glPopMatrix();
+			        		}
+			        	GL11.glPopMatrix();
+			        	}
 		        	GL11.glPopMatrix();
-		        	}
+		        }
 	        	GL11.glPopMatrix();
-	        }
-        	GL11.glPopMatrix();
-        }	
-        GL11.glPopMatrix();
-    }
+	        }	
+	        GL11.glPopMatrix();
+	    }
+   GL11.glPopMatrix();}
     protected void setSceneCamera()
     {
         // call the default behaviour defined in GraphicsLab. This will set a default perspective projection
@@ -255,6 +470,8 @@ public class CS2150Coursework extends GraphicsLab
         super.setSceneCamera();
         //TODO: If it is appropriate for your scene, modify the camera's position and orientation here
         //        using a call to GL11.gluLookAt(...)
+        GLU.gluLookAt(0.0f,5.0f,12.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
+
    }
 
     protected void cleanupScene()
@@ -263,10 +480,8 @@ public class CS2150Coursework extends GraphicsLab
    
     
     private void drawUnitWindmill(){
-    //Colour bottom, Colour nearRight, Colour nearLeft, Colour farRight, Colour farLeft, Colour back, Colour highNearRight, Colour highNearLeft, Colour highFarRight, Colour highFarLeft, Colour highBack, Colour topNearRight, Colour topNearLeft, Colour topFarRight, Colour topFarLeft, Colour topBack
-    //the vertices for the windmill 
-
-        
+   
+    	//the vertices for the windmill 
 
     	Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
     	Vertex v2 = new Vertex(-3.0f, 0.0f, 2.0f);
@@ -285,7 +500,6 @@ public class CS2150Coursework extends GraphicsLab
     	Vertex v15 = new Vertex(0.0f, 7.0f, 1.0f);
     	Vertex v16 = new Vertex(0.0f, 8.0f, 2.5f);
     	
-    	
     	//bottom
     	GL11.glBegin(GL11.GL_POLYGON);
 		{
@@ -296,42 +510,46 @@ public class CS2150Coursework extends GraphicsLab
 			v4.submit();
 			v5.submit();
 		}
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
+
 		//near left side
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
 			new Normal(v1.toVector(),v7.toVector(),v8.toVector(),v2.toVector()).submit();
 			
-			GL11.glTexCoord2f(0.0f,0.0f);
+			GL11.glTexCoord2f(1.0f,1.0f);
 			v1.submit();
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v7.submit();
             
-            GL11.glTexCoord2f(1.0f,1.0f);
+            GL11.glTexCoord2f(0.0f,0.0f);
             v8.submit();
             
             GL11.glTexCoord2f(0.0f,1.0f);
 			v2.submit();
 			
 		}
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
+//		
 		//near right side
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
 			new Normal(v1.toVector(),v5.toVector(),v6.toVector(),v7.toVector()).submit();
-			
+			GL11.glTexCoord2f(1.0f,1.0f);
 			v1.submit();
-			v5.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v5.submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
 			v6.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
 			v7.submit();
 		}
 		GL11.glEnd();
 	    
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
+//		GL11.glEnable(GL11.GL_TEXTURE_2D);
+//        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
 		//far left side
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
@@ -350,8 +568,9 @@ public class CS2150Coursework extends GraphicsLab
 			v3.submit();	
 		}
 		GL11.glEnd();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
+//	
+//		GL11.glEnable(GL11.GL_TEXTURE_2D);
+//        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
 		//far right side
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
@@ -399,9 +618,16 @@ public class CS2150Coursework extends GraphicsLab
 			
 			new Normal(v8.toVector(),v7.toVector(),v15.toVector(),v14.toVector()).submit();
 			
+			GL11.glTexCoord2f(0.0f,0.0f);
 			v8.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
 			v7.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
 			v15.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
 			v14.submit();
 		}
 		GL11.glEnd();
@@ -410,10 +636,16 @@ public class CS2150Coursework extends GraphicsLab
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
 			new Normal(v7.toVector(),v6.toVector(),v11.toVector(),v15.toVector()).submit();
-			
+			GL11.glTexCoord2f(0.0f,0.0f);
 			v7.submit();
-			v6.submit();
-			v11.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v6.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v11.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
 			v15.submit();
 		}
 		GL11.glEnd();
@@ -665,26 +897,7 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 		
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-         GL11.glBindTexture(GL11.GL_TEXTURE_2D,centreOfWindmillTexture.getTextureID());
-		//centre
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v4.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v3.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v2.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v1.submit();
-    		
-		}
-		GL11.glEnd();
+		
 		
 		//rear up vertical blade
     	GL11.glBegin(GL11.GL_POLYGON);
@@ -763,6 +976,238 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 		
+		
+		//right far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v10.toVector(),v22.toVector(),v21.toVector(),v9.toVector()).submit();
+    		//GL11.glTexCoord2f(0.0f,0.0f);
+    		v10.submit();
+            
+         //   GL11.glTexCoord2f(1.0f,0.0f);
+            v22.submit();
+            
+        //    GL11.glTexCoord2f(1.0f,1.0f);
+            v21.submit();
+            
+         //   GL11.glTexCoord2f(0.0f,1.0f);
+			v9.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//right up edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v15.toVector(),v3.toVector(),v9.toVector(),v21.toVector()).submit();
+    	//	GL11.glTexCoord2f(0.0f,0.0f);
+    		v15.submit();
+            
+       //     GL11.glTexCoord2f(1.0f,0.0f);
+            v3.submit();
+            
+      //      GL11.glTexCoord2f(1.0f,1.0f);
+            v9.submit();
+            
+      //      GL11.glTexCoord2f(0.0f,1.0f);
+			v21.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//right bottom edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v2.toVector(),v14.toVector(),v22.toVector(),v10.toVector()).submit();
+    //		GL11.glTexCoord2f(0.0f,0.0f);
+    		v2.submit();
+            
+      //      GL11.glTexCoord2f(1.0f,0.0f);
+            v14.submit();
+            
+     //       GL11.glTexCoord2f(1.0f,1.0f);
+            v22.submit();
+            
+     //       GL11.glTexCoord2f(0.0f,1.0f);
+			v10.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//top top edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v17.toVector(),v5.toVector(),v6.toVector(),v18.toVector()).submit();
+    	//	GL11.glTexCoord2f(0.0f,0.0f);
+    		v17.submit();
+            
+        //    GL11.glTexCoord2f(1.0f,0.0f);
+            v5.submit();
+            
+        //    GL11.glTexCoord2f(1.0f,1.0f);
+            v6.submit();
+            
+       //     GL11.glTexCoord2f(0.0f,1.0f);
+			v18.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//top right edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v3.toVector(),v15.toVector(),v18.toVector(),v6.toVector()).submit();
+    	//	GL11.glTexCoord2f(0.0f,0.0f);
+    		v3.submit();
+            
+       //     GL11.glTexCoord2f(1.0f,0.0f);
+            v15.submit();
+            
+       //     GL11.glTexCoord2f(1.0f,1.0f);
+            v18.submit();
+            
+        //    GL11.glTexCoord2f(0.0f,1.0f);
+			v6.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//top left edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v16.toVector(),v4.toVector(),v5.toVector(),v17.toVector()).submit();
+    	//	GL11.glTexCoord2f(0.0f,0.0f);
+    		v16.submit();
+            
+         //   GL11.glTexCoord2f(1.0f,0.0f);
+            v4.submit();
+            
+      //     GL11.glTexCoord2f(1.0f,1.0f);
+            v5.submit();
+            
+       //     GL11.glTexCoord2f(0.0f,1.0f);
+			v17.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//left far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v11.toVector(),v23.toVector(),v24.toVector(),v12.toVector()).submit();
+    		//GL11.glTexCoord2f(0.0f,0.0f);
+    		v11.submit();
+            
+           // GL11.glTexCoord2f(1.0f,0.0f);
+            v23.submit();
+            
+        //    GL11.glTexCoord2f(1.0f,1.0f);
+            v24.submit();
+            
+       //     GL11.glTexCoord2f(0.0f,1.0f);
+			v12.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//left top edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v23.toVector(),v11.toVector(),v4.toVector(),v16.toVector()).submit();
+    		//GL11.glTexCoord2f(0.0f,0.0f);
+    		v23.submit();
+            
+       //     GL11.glTexCoord2f(1.0f,0.0f);
+            v11.submit();
+            
+       //     GL11.glTexCoord2f(1.0f,1.0f);
+            v4.submit();
+            
+     //       GL11.glTexCoord2f(0.0f,1.0f);
+			v16.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		
+		//left bottom edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v12.toVector(),v24.toVector(),v13.toVector(),v1.toVector()).submit();
+    	//	GL11.glTexCoord2f(0.0f,0.0f);
+    		v12.submit();
+            
+       //     GL11.glTexCoord2f(1.0f,0.0f);
+            v24.submit();
+            
+       //     GL11.glTexCoord2f(1.0f,1.0f);
+            v13.submit();
+            
+    //        GL11.glTexCoord2f(0.0f,1.0f);
+			v1.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom far edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v7.toVector(),v19.toVector(),v20.toVector(),v8.toVector()).submit();
+    //		GL11.glTexCoord2f(0.0f,0.0f);
+    		v7.submit();
+            
+       //     GL11.glTexCoord2f(1.0f,0.0f);
+            v19.submit();
+            
+      //      GL11.glTexCoord2f(1.0f,1.0f);
+            v20.submit();
+            
+      //      GL11.glTexCoord2f(0.0f,1.0f);
+			v8.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom right edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v8.toVector(),v20.toVector(),v14.toVector(),v2.toVector()).submit();
+    //		GL11.glTexCoord2f(0.0f,0.0f);
+    		v8.submit();
+            
+     //       GL11.glTexCoord2f(1.0f,0.0f);
+            v20.submit();
+            
+     //       GL11.glTexCoord2f(1.0f,1.0f);
+            v14.submit();
+            
+   //         GL11.glTexCoord2f(0.0f,1.0f);
+			v2.submit();
+    		
+		}
+		GL11.glEnd();
+		
+		//bottom left edge
+		GL11.glBegin(GL11.GL_POLYGON);
+    	{
+    		new Normal(v19.toVector(),v7.toVector(),v1.toVector(),v13.toVector()).submit();
+    //		GL11.glTexCoord2f(0.0f,0.0f);
+    		v19.submit();
+            
+      //      GL11.glTexCoord2f(1.0f,0.0f);
+            v7.submit();
+            
+     //       GL11.glTexCoord2f(1.0f,1.0f);
+            v1.submit();
+            
+     //       GL11.glTexCoord2f(0.0f,1.0f);
+			v13.submit();
+    		
+		}
+		GL11.glEnd();
+
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,centreOfWindmillTexture.getTextureID());
 		//centre
@@ -784,234 +1229,22 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 		
-		//right far edge
+		//centre
 		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v10.toVector(),v22.toVector(),v21.toVector(),v9.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v10.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v22.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v21.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v9.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		//right up edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v15.toVector(),v3.toVector(),v9.toVector(),v21.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v15.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v3.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v9.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v21.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		//right bottom edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v2.toVector(),v14.toVector(),v22.toVector(),v10.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v2.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v14.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v22.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v10.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		//top top edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v17.toVector(),v5.toVector(),v6.toVector(),v18.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v17.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v5.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v6.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v18.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		//top right edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v3.toVector(),v15.toVector(),v18.toVector(),v6.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v3.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v15.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v18.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v6.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		
-		//top left edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v16.toVector(),v4.toVector(),v5.toVector(),v17.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v16.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v4.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v5.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v17.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		
-		//left far edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v11.toVector(),v23.toVector(),v24.toVector(),v12.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v11.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v23.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v24.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v12.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		//left top edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v23.toVector(),v11.toVector(),v4.toVector(),v16.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v23.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v11.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v4.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v16.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		
-		//left bottom edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v12.toVector(),v24.toVector(),v13.toVector(),v1.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v12.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v24.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v13.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
+   	{
+   		new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
+   		GL11.glTexCoord2f(0.0f,0.0f);
+   		v4.submit();
+           
+           GL11.glTexCoord2f(1.0f,0.0f);
+           v3.submit();
+           
+           GL11.glTexCoord2f(1.0f,1.0f);
+           v2.submit();
+           
+           GL11.glTexCoord2f(0.0f,1.0f);
 			v1.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		//bottom far edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v7.toVector(),v19.toVector(),v20.toVector(),v8.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v7.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v19.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v20.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v8.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		//bottom right edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v8.toVector(),v20.toVector(),v14.toVector(),v2.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v8.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v20.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v14.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v2.submit();
-    		
-		}
-		GL11.glEnd();
-		
-		//bottom left edge
-		GL11.glBegin(GL11.GL_POLYGON);
-    	{
-    		new Normal(v19.toVector(),v7.toVector(),v1.toVector(),v13.toVector()).submit();
-    		GL11.glTexCoord2f(0.0f,0.0f);
-    		v19.submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v7.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v1.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-			v13.submit();
-    		
+   		
 		}
 		GL11.glEnd();
     }
@@ -1042,29 +1275,147 @@ public class CS2150Coursework extends GraphicsLab
         GL11.glEnd();
     }
     
-    private void drawUnitBirdBody(Colour body, Colour legs){
-    	Vertex v38 = new Vertex(0.0f, 0.0f,0.0f);
-    	Vertex v37 = new Vertex(0.2f, 0.0f,0.0f);
-    	Vertex v36 = new Vertex(0.2f, 0.0f,0.2f);
-    	Vertex v35 = new Vertex(0.0f, 0.0f,0.2f);
-    	Vertex v34 = new Vertex(0.0f, 0.8f,0.2f);
-    	Vertex v33 = new Vertex(0.0f, 0.8f,0.0f);
-    	Vertex v32 = new Vertex(0.2f, 0.8f,0.0f);
-    	Vertex v31 = new Vertex(0.2f, 0.8f,0.2f);
-    	Vertex v12 = new Vertex(0.6f, 0.8f,0.4f);
+    private void drawUnitWindmillPin(){
+    	
+    	Vertex v1 = new Vertex(0.0f, 0.0f,0.0f);
+    	Vertex v2 = new Vertex(0.2f, 0.0f,0.0f);
+    	Vertex v3 = new Vertex(0.2f, 0.0f,0.2f);
+    	Vertex v4 = new Vertex(0.0f, 0.0f,0.2f);
+    	Vertex v5 = new Vertex(0.0f, 0.8f,0.2f);
+    	Vertex v6 = new Vertex(0.0f, 0.8f,0.0f);
+    	Vertex v7 = new Vertex(0.2f, 0.8f,0.0f);
+    	Vertex v8 = new Vertex(0.2f, 0.8f,0.2f);
+    	
+    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillPinTexture.getTextureID());
+        
+    	//bottom of pin
+    	GL11.glBegin(GL11.GL_POLYGON);
+        {
+           new Normal(v1.toVector(),v2.toVector(),v3.toVector(),v4.toVector()).submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v1.submit();
+            
+           GL11.glTexCoord2f(0.0f,0.0f);
+            v2.submit();
+            
+           GL11.glTexCoord2f(0.0f,1.0f);
+            v3.submit();
+            
+           GL11.glTexCoord2f(1.0f,1.0f);
+            v4.submit();
+        }
+        GL11.glEnd();
+    	
+        //left side of pin
+        GL11.glBegin(GL11.GL_POLYGON);
+        {
+           new Normal(v1.toVector(),v6.toVector(),v7.toVector(),v2.toVector()).submit();
+            
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v1.submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
+            v6.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v7.submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v2.submit();
+        }
+        GL11.glEnd();
+        
+        //front of pin
+        GL11.glBegin(GL11.GL_POLYGON);
+        {
+            new Normal(v1.toVector(),v4.toVector(),v5.toVector(),v6.toVector()).submit();
+            
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v1.submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
+            v4.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v5.submit();
+            
+          GL11.glTexCoord2f(1.0f,1.0f);
+            v6.submit();
+        }
+        GL11.glEnd();
+        
+        //right side of pin
+        GL11.glBegin(GL11.GL_POLYGON);
+        {
+            new Normal(v4.toVector(),v3.toVector(),v8.toVector(),v5.toVector()).submit();
+            
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v4.submit();
+            
+            GL11.glTexCoord2f(0.0f,0.0f);
+            v3.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+           	v8.submit();
+            
+           	GL11.glTexCoord2f(1.0f,1.0f);
+            v5.submit();
+        }
+        GL11.glEnd();
+    
+    
+    	//back of pin
+        GL11.glBegin(GL11.GL_POLYGON);
+        {
+            new Normal(v3.toVector(),v2.toVector(),v7.toVector(),v8.toVector()).submit();
+            
+            
+          GL11.glTexCoord2f(1.0f,0.0f);
+            v3.submit();
+            
+           GL11.glTexCoord2f(0.0f,0.0f);
+            v2.submit();
+            
+           GL11.glTexCoord2f(0.0f,1.0f);
+            v7.submit();
+            
+           GL11.glTexCoord2f(1.0f,1.0f);
+            v8.submit();
+        }
+        GL11.glEnd();
+    }
+    
+    private void drawUnitBirdBody(){
+    	
+    	Vertex v1 = new Vertex(-0.8f, 2.3f,-0.2f);
+    	Vertex v2 = new Vertex(-0.8f, 2.3f,0.4f);
+    	Vertex v3 = new Vertex(-0.6f, 2.5f,0.4f);
+    	Vertex v4 = new Vertex(-0.6f, 2.5f,-0.2f);
+    	Vertex v5 = new Vertex(-0.6f, 2.1f,-0.2f);
+    	Vertex v6 = new Vertex(-0.6f, 2.1f,0.4f);
     	Vertex v7 = new Vertex(-0.2f, 0.8f,0.4f);
+    	Vertex v8 = new Vertex(-0.2f, 1.8f,0.4f);
+    	Vertex v9 = new Vertex(-0.2f, 1.8f,-0.2f);
     	Vertex v10 = new Vertex(-0.2f, 0.8f,-0.2f);
     	Vertex v11 = new Vertex(0.6f, 0.8f,-0.2f);
-    	Vertex v14 = new Vertex(0.6f, 1.8f,-0.2f);
-    	Vertex v9 = new Vertex(-0.2f, 1.8f,-0.2f);
-    	Vertex v8 = new Vertex(-0.2f, 1.8f,0.4f);
+    	Vertex v12 = new Vertex(0.6f, 0.8f,0.4f);
     	Vertex v13 = new Vertex(0.6f, 1.8f,0.4f);
-    	Vertex v6 = new Vertex(-0.6f, 2.1f,0.4f);
-    	Vertex v5 = new Vertex(-0.6f, 2.1f,-0.2f);
-    	Vertex v2 = new Vertex(-0.8f, 2.3f,0.4f);
-    	Vertex v1 = new Vertex(-0.8f, 2.3f,-0.2f);
-    	Vertex v4 = new Vertex(-0.6f, 2.5f,-0.2f);
-    	Vertex v3 = new Vertex(-0.6f, 2.5f,0.4f);
+    	Vertex v14 = new Vertex(0.6f, 1.8f,-0.2f);
+    	Vertex v31 = new Vertex(0.2f, 0.8f,0.2f);
+    	Vertex v32 = new Vertex(0.2f, 0.8f,0.0f);
+    	Vertex v33 = new Vertex(0.0f, 0.8f,0.0f);
+    	Vertex v34 = new Vertex(0.0f, 0.8f,0.2f);
+    	Vertex v35 = new Vertex(0.0f, 0.0f,0.2f);
+    	Vertex v36 = new Vertex(0.2f, 0.0f,0.2f);
+    	Vertex v37 = new Vertex(0.2f, 0.0f,0.0f);
+    	Vertex v38 = new Vertex(0.0f, 0.0f,0.0f);
+    	
+    	
     	
    	 GL11.glEnable(GL11.GL_TEXTURE_2D);
      GL11.glBindTexture(GL11.GL_TEXTURE_2D,	chickenLegsTexture.getTextureID());
@@ -1073,8 +1424,6 @@ public class CS2150Coursework extends GraphicsLab
     	GL11.glBegin(GL11.GL_POLYGON);
         {
            new Normal(v38.toVector(),v37.toVector(),v36.toVector(),v35.toVector()).submit();
-            
-            legs.submit();
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v38.submit();
@@ -1095,7 +1444,6 @@ public class CS2150Coursework extends GraphicsLab
         {
            new Normal(v38.toVector(),v33.toVector(),v32.toVector(),v37.toVector()).submit();
             
-            legs.submit();
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v38.submit();
@@ -1116,7 +1464,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v38.toVector(),v35.toVector(),v34.toVector(),v33.toVector()).submit();
             
-            legs.submit();
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v38.submit();
@@ -1137,7 +1484,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v35.toVector(),v36.toVector(),v31.toVector(),v34.toVector()).submit();
             
-            legs.submit();
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v35.submit();
@@ -1159,7 +1505,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v36.toVector(),v37.toVector(),v32.toVector(),v31.toVector()).submit();
             
-            legs.submit();
             
           GL11.glTexCoord2f(1.0f,0.0f);
             v36.submit();
@@ -1184,8 +1529,7 @@ public class CS2150Coursework extends GraphicsLab
         GL11.glBegin(GL11.GL_POLYGON);
         {
             new Normal(v10.toVector(),v11.toVector(),v12.toVector(),v7.toVector()).submit();
-            
-            body.submit(); 
+             
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v10.submit();
@@ -1205,8 +1549,7 @@ public class CS2150Coursework extends GraphicsLab
         GL11.glBegin(GL11.GL_POLYGON);
         {
             new Normal(v10.toVector(),v9.toVector(),v14.toVector(),v11.toVector()).submit();
-            
-            body.submit(); 
+             
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v10.submit();
@@ -1226,8 +1569,7 @@ public class CS2150Coursework extends GraphicsLab
         GL11.glBegin(GL11.GL_POLYGON);
         {
             new Normal(v9.toVector(),v10.toVector(),v7.toVector(),v8.toVector()).submit();
-            
-            body.submit(); 
+             
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v9.submit();
@@ -1247,8 +1589,7 @@ public class CS2150Coursework extends GraphicsLab
         GL11.glBegin(GL11.GL_POLYGON);
         {
             new Normal(v8.toVector(),v7.toVector(),v12.toVector(),v13.toVector()).submit();
-            
-            body.submit(); 
+             
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v8.submit();
@@ -1269,7 +1610,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v13.toVector(),v12.toVector(),v11.toVector(),v14.toVector()).submit();
             
-            body.submit(); 
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v13.submit();
@@ -1290,7 +1630,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v9.toVector(),v8.toVector(),v13.toVector(),v14.toVector()).submit();
             
-            body.submit(); 
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v9.submit();
@@ -1311,7 +1650,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v5.toVector(),v6.toVector(),v8.toVector(),v9.toVector()).submit();
             
-            body.submit(); 
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v5.submit();
@@ -1332,7 +1670,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v6.toVector(),v5.toVector(),v10.toVector(),v7.toVector()).submit();
             
-            body.submit(); 
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v6.submit();
@@ -1353,7 +1690,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v6.toVector(),v7.toVector(),v8.toVector()).submit();
             
-            body.submit(); 
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v6.submit();
@@ -1371,8 +1707,7 @@ public class CS2150Coursework extends GraphicsLab
         GL11.glBegin(GL11.GL_TRIANGLES);
         {
             new Normal(v5.toVector(),v9.toVector(),v10.toVector()).submit();
-            
-            body.submit(); 
+             
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v5.submit();
@@ -1391,7 +1726,6 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v6.toVector(),v5.toVector(),v4.toVector(),v3.toVector()).submit();
             
-            body.submit(); 
             
             GL11.glTexCoord2f(1.0f,0.0f);
             v6.submit();
@@ -1406,41 +1740,24 @@ public class CS2150Coursework extends GraphicsLab
             v3.submit();
         }
         GL11.glEnd();
-        
-        //top front of head
-        GL11.glBegin(GL11.GL_POLYGON);
-        {
-            new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
-            
-            GL11.glTexCoord2f(1.0f,0.0f);
-            v4.submit();
-            
-            GL11.glTexCoord2f(0.0f,0.0f);
-            v3.submit();
-            
-            GL11.glTexCoord2f(0.0f,1.0f);
-            v2.submit();
-            
-            GL11.glTexCoord2f(1.0f,1.0f);
-            v1.submit();
-        }
-        GL11.glEnd();
-        
+       
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,birdHead.getTextureID());
         //bottom front of head
         GL11.glBegin(GL11.GL_POLYGON);
         {
             new Normal(v1.toVector(),v2.toVector(),v6.toVector(),v5.toVector()).submit();
             
-            GL11.glTexCoord2f(1.0f,0.0f);
+            GL11.glTexCoord2f(0.0f,1.0f);
             v1.submit();
             
-            GL11.glTexCoord2f(0.0f,0.0f);
+            GL11.glTexCoord2f(1.0f,1.0f);
             v2.submit();
             
-            GL11.glTexCoord2f(0.0f,1.0f);
+            GL11.glTexCoord2f(1.0f,0.0f);
             v6.submit();
             
-            GL11.glTexCoord2f(1.0f,1.0f);
+            GL11.glTexCoord2f(0.0f,0.0f);
             v5.submit();
         }
         GL11.glEnd();
@@ -1450,13 +1767,13 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v2.toVector(),v6.toVector(),v3.toVector()).submit();
             
-            GL11.glTexCoord2f(1.0f,0.0f);
+            GL11.glTexCoord2f(1.0f,1.0f);
             v2.submit();
             
             GL11.glTexCoord2f(0.0f,0.0f);
             v6.submit();
             
-            GL11.glTexCoord2f(0.0f,1.0f);
+            GL11.glTexCoord2f(1.0f,0.0f);
             v3.submit();
             
         }
@@ -1467,18 +1784,39 @@ public class CS2150Coursework extends GraphicsLab
         {
             new Normal(v1.toVector(),v4.toVector(),v5.toVector()).submit();
             
-            GL11.glTexCoord2f(1.0f,0.0f);
+            GL11.glTexCoord2f(1.0f,1.0f);
             v1.submit();
             
             GL11.glTexCoord2f(0.0f,0.0f);
             v4.submit();
             
-            GL11.glTexCoord2f(0.0f,1.0f);
+            GL11.glTexCoord2f(1.0f,0.0f);
             v5.submit();
             
         }
         GL11.glEnd();
-    
+        
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,birdFace.getTextureID());
+        
+        //top front of head
+        GL11.glBegin(GL11.GL_POLYGON);
+        {
+            new Normal(v4.toVector(),v3.toVector(),v2.toVector(),v1.toVector()).submit();
+            
+            GL11.glTexCoord2f(1.0f,1.0f);
+            v4.submit();
+            
+            GL11.glTexCoord2f(0.0f,1.0f);
+            v3.submit();
+            
+            GL11.glTexCoord2f(0.0f,.0f);
+            v2.submit();
+            
+            GL11.glTexCoord2f(1.0f,0.0f);
+            v1.submit();
+        }
+        GL11.glEnd();
     }
     
     private void drawUnitBirdWings(){
@@ -1608,23 +1946,5 @@ public class CS2150Coursework extends GraphicsLab
         GL11.glEnd();
     }
         
-//        // if the user is viewing an axis, then also draw this plane
-//        // using lines so that axis aligned planes can still be seen
-//        if(isViewingAxis())
-//        {
-//            // also disable textures when drawing as lines
-//            // so that the lines can be seen more clearly
-//            GL11.glPushAttrib(GL11.GL_TEXTURE_2D);
-//            GL11.glDisable(GL11.GL_TEXTURE_2D);
-//            GL11.glBegin(GL11.GL_LINE_LOOP);
-//            {
-//                v4.submit();
-//                v3.submit();
-//                v2.submit();
-//                v1.submit();
-//            }
-//            GL11.glEnd();
-//            GL11.glPopAttrib();
-//        	}
-    	
+       
     }

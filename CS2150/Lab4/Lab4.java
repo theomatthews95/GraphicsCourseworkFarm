@@ -37,10 +37,9 @@ public class Lab4 extends GraphicsLab
     private final int houseList = 1;
     /** display list id for the roof */
     private final int roofList  = 2;
-    private final int doorList = 3;
     
     /** angle that the house is rotate to see the lighting better */
-    private float houseRotationAngle= 1.0f;
+    private float houseRotationAngle= 35.0f;
     
     public static void main(String args[])
     {   new Lab4().run(WINDOWED,"Lab 4 - Lighting",0.01f);
@@ -55,11 +54,11 @@ public class Lab4 extends GraphicsLab
 
         
         // the first light for the scene is white...
-        float diffuse0[]  = { 1.0f,  1.0f, 1.0f, 1.0f};
+        float diffuse0[]  = { 0.6f,  0.6f, 0.6f, 1.0f};
         // ...with a dim ambient contribution...
-        float ambient0[]  = { 1.0f,  1.0f, 1.0f, 1.0f};
+        float ambient0[]  = { 0.1f,  0.1f, 0.1f, 1.0f};
         // ...and is positioned above and behind the viewpoint
-        float position0[] = { 0.0f, 10.0f, 10.0f, 1.0f}; 
+        float position0[] = { 0.0f, 10.0f, 5.0f, 1.0f}; 
 
         // supply OpenGL with the properties for the first light
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient0));
@@ -68,7 +67,6 @@ public class Lab4 extends GraphicsLab
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, FloatBuffer.wrap(position0));
         // enable the first light
         GL11.glEnable(GL11.GL_LIGHT0);
-        
 
 
         // enable lighting calculations
@@ -79,14 +77,12 @@ public class Lab4 extends GraphicsLab
         // prepare the display lists for later use
         GL11.glNewList(houseList,GL11.GL_COMPILE);
         {   drawUnitCube();
-        drawUnitDoor();
         }
         GL11.glEndList();
         GL11.glNewList(roofList,GL11.GL_COMPILE);
         {   drawUnitRoof();
         }
         GL11.glEndList();
-      
     }
     protected void checkSceneInput()
     {
@@ -106,13 +102,12 @@ public class Lab4 extends GraphicsLab
         GL11.glTranslatef(0.0f, -0.5f, -5.0f);
         GL11.glRotatef(houseRotationAngle, 0.0f, 1.0f, 0.0f);
 
-        
         // how shiny are the front faces of the house (specular exponent)
         float houseFrontShininess  = 2.0f;
         // specular reflection of the front faces of the house
-        float houseFrontSpecular[] = {0.5f, 0.5f, 0.5f, 1.0f};
+        float houseFrontSpecular[] = {0.1f, 0.0f, 0.0f, 1.0f};
         // diffuse reflection of the front faces of the house
-        float houseFrontDiffuse[]  = {0.98f, 0.86f, 0.05f, 1.0f};
+        float houseFrontDiffuse[]  = {0.6f, 0.2f, 0.2f, 1.0f};
         
         // set the material properties for the house using OpenGL
         GL11.glMaterialf(GL11.GL_FRONT, GL11.GL_SHININESS, houseFrontShininess);
@@ -128,7 +123,7 @@ public class Lab4 extends GraphicsLab
         GL11.glScalef(1.0f, 0.5f, 1.0f);
         
         // how shiny are the front faces of the roof (specular exponent)
-        float roofFrontShininess = 2.0f;
+        float roofFrontShininess = 60.0f;
         // specular reflection of the front faces of the roof
         float roofFrontSpecular[] = {0.2f, 0.2f, 0.2f, 1.0f};
         // diffuse reflection of the front faces of the roof
@@ -151,23 +146,6 @@ public class Lab4 extends GraphicsLab
      * Draws a roof geometry of unit length, width and height aligned along the x axis.
      * The roof uses the current OpenGL material settings for its appearance
      */
-    private void drawUnitDoor(){
-    	Vertex v1 = new Vertex(-0.25f, -0.5f, 0.7f);
-    	Vertex v2 = new Vertex(0.25f, -0.5f, 0.7f);
-    	Vertex v3 = new Vertex(0.25f, 0.25f, 0.7f);
-    	Vertex v4 = new Vertex(-0.25f, 0.25f, 0.7f);
-    	
-    	GL11.glBegin(GL11.GL_POLYGON);{
-    		new Normal(v1.toVector(),v2.toVector(), v3.toVector(), v4.toVector()).submit();
-    		
-    		v1.submit();
-    		v2.submit();
-    		v3.submit();
-    		v4.submit();
-    			}
-    	GL11.glEnd();
-    }
-    
     private void drawUnitRoof()
     {
         Vertex v1 = new Vertex(-0.5f,-0.5f,-0.5f);
