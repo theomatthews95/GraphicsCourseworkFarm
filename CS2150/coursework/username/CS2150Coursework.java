@@ -1,5 +1,25 @@
 /* CS2150Coursework.java
- * TODO: put your university username and full name here
+ * Matthtgs, Theo Matthews
+ *
+ *	My CS2150 coursework is a model of a windmill and a chicken, in a luscious green field,
+ * 	surrounded by blue skies. The windmill has spinning	blades and the chicken sits on top of
+ *  the blades, flapping its wings. The user is able to interact with the scene in many ways 
+ *  by moving the viewpoint using the arrow keys, the viewpoint's height by using U and D, for 
+ *  Up and Down respectively. The user can also speed up the windmill's blades' rotation speed 
+ *  by pressing the R key, and make the chicken flaps its wings by pressing the F key. Program 
+ *  may be slow to start due to heavy use of textures.
+ *
+ *	The keys to be used in the scene:
+ *		- UP		Move forward/increase the Z value of the whole scene
+ *		- DOWN		Move backwards/decrease the Z value of the whole scene
+ *		- RIGHT		Rotate view sideways to the right/rotate whole ground plane left
+ *		- LEFT		Rotate view sideways to the left/rotate whole ground plane right
+ *		- U			Move up/Increase the Z value of the whole scene 
+ *		- D			Move down/Decrease the Z value of the whole scene 
+ *		- R			Rotate the windmill's blades faster
+ *		- F			Make the chicken flap its wings
+ *		- SPACE		Reset the scene completely
+ *
  *
  * Scene Graph:
  *  Scene origin
@@ -94,7 +114,7 @@ public class CS2150Coursework extends GraphicsLab
         // ...with a dim ambient contribution...
         float ambient0[]  = { 0.6f,  0.6f, 0.6f, 1.0f};
         // ...and is positioned above and behind the viewpoint
-        float position0[] = { 0.0f, 10.0f, 010.0f, 1.0f}; 
+        float position0[] = { 0.0f, 10.0f, -10.0f, 1.0f}; 
 
         // supply OpenGL with the properties for the first light
         GL11.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, FloatBuffer.wrap(ambient0));
@@ -160,9 +180,9 @@ public class CS2150Coursework extends GraphicsLab
     	GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
     }
     protected void checkSceneInput()
-    {//TODO: Check for keyboard and mouse input here
+    {
     	
-//    	// Rotate if the r key is pressed
+    	//Rotate blades faster when R key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_R))
     	{
     		bladeRotationAngle += -0.05f;
@@ -170,6 +190,8 @@ public class CS2150Coursework extends GraphicsLab
             {  bladeRotationAngle = 0.0f;
             }
     	}
+    	
+    	//Flap birds wings when F key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_F))
     			{
     		wingRotationAngle += -0.1f;
@@ -178,41 +200,68 @@ public class CS2150Coursework extends GraphicsLab
             }
     		
     			}
+    	//Rotate whole ground plane left when Left key arrow is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
     	{
     		groundRotationAngle += 0.01f;
     		
     	}
+    
+    	//Rotate whole ground plane right when Right arrow key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
     	{
     		groundRotationAngle += -0.01f;
     		
     	}
+    	
+    	//Increase the Z value of the whole scene when the Up arrow is pressed 
     	if(Keyboard.isKeyDown(Keyboard.KEY_UP))
     	{
-    		if(groundForwardValue > 8.0f){groundForwardValue += 0.0f;}else{
-        	groundForwardValue += 0.001f;}
+    		if(groundForwardValue > 8.0f){
+    			groundForwardValue += 0.0f; //stop controller going too forward
+    		}
+    		else{
+    			groundForwardValue += 0.001f;
+    		}
     		
     	}
+    	
+    	//Decrease the Z value of the whole scene when the Down arrow is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_DOWN))
     	{
-    		if(groundForwardValue < -8.0f){groundForwardValue += 0.0f;}else{
-        	groundForwardValue += -0.001f;}
+    		if(groundForwardValue < -8.0f){
+    			groundForwardValue += 0.0f; //stop controller going too far back
+    		}
+    		else{
+    			groundForwardValue += -0.001f;
+        	}
     		
     	}
+    	
+    	//Increase the Y value of the whole scene when the U key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_U))
     	{
-    		if(groundVerticalValue < -5.0f){groundVerticalValue += 0.0f;}else{
-
-        		groundVerticalValue += -0.001f;}
+    		if(groundVerticalValue < -5.0f){
+    			groundVerticalValue += 0.0f; //stop controller going too high
+    		}
+    		else{
+        		groundVerticalValue += -0.001f;
+        	}
     		
     	}
+    	//Decrease the Y value of the whole scene when the D key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_D))
     	{
-    		if(groundVerticalValue > 2.5f){groundVerticalValue += 0.0f;}else{
-    			groundVerticalValue += 0.001f;}
+    		if(groundVerticalValue > 2.5f){
+    			groundVerticalValue += 0.0f; //stop controller going too low
+    		}
+    		else{
+    			groundVerticalValue += 0.001f;
+    		}
     		
     	}
+    	
+    	//Allow user to completely reset the scene when pressing space bar
     	if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
     	
     	   groundRotationAngle = 0.0f;
@@ -226,21 +275,17 @@ public class CS2150Coursework extends GraphicsLab
     }
     protected void updateScene()
     {
-        //TODO: Update your scene variables here - remember to use the current animation scale value
-        //        (obtained via a call to getAnimationScale()) in your modifications so that your animations
-        //        can be made faster or slower depending on the machine you are working on
+    	bladeRotationAngle += -0.03f;
     }
     protected void renderScene()
-    {//TODO: Render your scene here - remember that a scene graph will help you write this method! 
-     //      It will probably call a number of other methods you will write.
-    	bladeRotationAngle += -0.03f;
+    {
     	
     	//whole scene
     	GL11.glPushMatrix();{
       	  GL11.glRotatef(groundRotationAngle, 0.0f, 1.0f, 0.0f);
-      	 
       	  GL11.glTranslatef(0.0f,groundVerticalValue,groundForwardValue);
-      	//draw the back sky plane
+      	 
+      	  	//draw the back sky plane
 	    	GL11.glPushMatrix();
 	        {
 	        	
@@ -280,7 +325,8 @@ public class CS2150Coursework extends GraphicsLab
 	            GL11.glPopAttrib();
 	        }
 	        GL11.glPopMatrix();
-	      //draw left sky plane
+	   
+	        //draw left sky plane
 	        GL11.glPushMatrix();
 	        {
 	        	
@@ -342,6 +388,7 @@ public class CS2150Coursework extends GraphicsLab
 	            GL11.glPopAttrib();
 	        }
 	        GL11.glPopMatrix();
+	       
 	        // draw the ground plane
 	        GL11.glPushMatrix();
 	        {
@@ -363,7 +410,7 @@ public class CS2150Coursework extends GraphicsLab
 	        
 	        
 	        
-		        //windmill body list
+		        //draw windmill body list
 		        GL11.glPushMatrix();
 		        {
 		        	
@@ -372,19 +419,18 @@ public class CS2150Coursework extends GraphicsLab
 		            GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
 			        GL11.glScalef(0.5f, 0.5f, 0.5f);	
 			        GL11.glCallList(windmillBodyList);
-	
+			        
+			        // disable textures and reset any local lighting changes
 			        GL11.glDisable(GL11.GL_TEXTURE_2D);
 		            GL11.glPopAttrib();
 	        
-	       
-	        
-			        //windmill blades list
+			        // draw windmill blades list
 			        GL11.glPushMatrix();
 			        {
 			        	 // how shiny are the blades (specular exponent)
-			            float bladeFrontShininess  = 100.0f;
+			            float bladeFrontShininess  = 10.0f;
 			            // specular reflection of the blades
-			            float bladeFrontSpecular[] = {100.8f, 100.8f, 100.8f, 1.0f};
+			            float bladeFrontSpecular[] = {10.0f, 10.0f, 10.0f, 1.0f};
 			            // diffuse reflection of the blades
 			            float bladeFrontDiffuse[]  = {0.8f, 0.8f, 0.8f, 1.0f};
 			            
@@ -394,12 +440,10 @@ public class CS2150Coursework extends GraphicsLab
 			            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_DIFFUSE, FloatBuffer.wrap(bladeFrontDiffuse));
 			            GL11.glMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT, FloatBuffer.wrap(bladeFrontDiffuse));
 	
-	            // enable texturing and bind an appropriate texture
+			          
 			            GL11.glTranslatef(0.1f, -4.1f, 5.8f);
 			            GL11.glRotatef(270.0f, 1.0f, 0.0f, 0.0f);
 			            GL11.glTranslatef(0.0f, 5.7f, 1.0f);
-	
-				       
 				        GL11.glRotatef(bladeRotationAngle, 0.0f, 0.0f, 1.0f);
 				        GL11.glCallList(windmillBladeList);
 				        GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -408,7 +452,7 @@ public class CS2150Coursework extends GraphicsLab
 			       
 			    
 			        
-				        //bird draw list
+				        //Draw bird body list
 				        GL11.glPushMatrix();
 			        	{
 			        		
@@ -425,15 +469,12 @@ public class CS2150Coursework extends GraphicsLab
 			        	            GL11.glDisable(GL11.GL_LIGHTING);
 			    		            GL11.glEnable(GL11.GL_TEXTURE_2D);
 			    		            GL11.glBindTexture(GL11.GL_TEXTURE_2D, featheredTexture.getTextureID());
-			    		          
-			        	         GL11.glTranslatef(0.4f, 1.2f, -0.2f);
+			    		            GL11.glTranslatef(0.4f, 1.2f, -0.2f);
 			        	    		GL11.glRotatef(180.0F, 0.0f, 1.0f, 0.0f);
-			        	    		
 			        	    		GL11.glRotatef(wingRotationAngle, 1.0f, 0.0f, 0.0f);
-			        	    		
 			        	    		GL11.glCallList(birdWingsList);
-			        	    		 GL11.glDisable(GL11.GL_TEXTURE_2D);
-			        	             GL11.glPopAttrib();
+			        	    		GL11.glDisable(GL11.GL_TEXTURE_2D);
+			        	            GL11.glPopAttrib();
 			        	    	}
 			        	    GL11.glPopMatrix();
 			        	
@@ -444,13 +485,13 @@ public class CS2150Coursework extends GraphicsLab
 			                    GL11.glDisable(GL11.GL_LIGHTING);
 					            GL11.glEnable(GL11.GL_TEXTURE_2D);
 					            GL11.glBindTexture(GL11.GL_TEXTURE_2D, featheredTexture.getTextureID());
-					          
-			        	    		GL11.glTranslatef(-0.1f, 1.2f, 0.4f);
-			        	    		GL11.glRotatef(wingRotationAngle, 1.0f, 0.0f, 0.0f);
+					         
+			        	  		GL11.glTranslatef(-0.1f, 1.2f, 0.4f);
+			        	   		GL11.glRotatef(wingRotationAngle, 1.0f, 0.0f, 0.0f);
 			        	    		
-			        	    		GL11.glCallList(birdWingsList);
-			        	    		 GL11.glDisable(GL11.GL_TEXTURE_2D);
-			        	             GL11.glPopAttrib();
+			        	   		GL11.glCallList(birdWingsList);
+			        	   		GL11.glDisable(GL11.GL_TEXTURE_2D);
+			        	        GL11.glPopAttrib();
 			        	    }
 			        	    GL11.glPopMatrix();
 			        		}
@@ -463,13 +504,10 @@ public class CS2150Coursework extends GraphicsLab
 	        GL11.glPopMatrix();
 	    }
    GL11.glPopMatrix();}
+  
     protected void setSceneCamera()
     {
-        // call the default behaviour defined in GraphicsLab. This will set a default perspective projection
-        // and default camera settings ready for some custom camera positioning below...  
         super.setSceneCamera();
-        //TODO: If it is appropriate for your scene, modify the camera's position and orientation here
-        //        using a call to GL11.gluLookAt(...)
         GLU.gluLookAt(0.0f,5.0f,12.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f);
 
    }
@@ -503,7 +541,6 @@ public class CS2150Coursework extends GraphicsLab
     	//bottom
     	GL11.glBegin(GL11.GL_POLYGON);
 		{
-			//bottom.submit();
 			v1.submit();
 			v2.submit();
 			v3.submit();
@@ -529,7 +566,7 @@ public class CS2150Coursework extends GraphicsLab
 			v2.submit();
 			
 		}
-//		
+		
 		//near right side
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
@@ -548,8 +585,6 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 	    
-//		GL11.glEnable(GL11.GL_TEXTURE_2D);
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
 		//far left side
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
@@ -568,9 +603,7 @@ public class CS2150Coursework extends GraphicsLab
 			v3.submit();	
 		}
 		GL11.glEnd();
-//	
-//		GL11.glEnable(GL11.GL_TEXTURE_2D);
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillWallTexture.getTextureID());
+		
 		//far right side
 		GL11.glBegin(GL11.GL_POLYGON);{
 			
@@ -590,7 +623,7 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 	    
-		
+		// enable texturing and bind an appropriate texture
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillBackTexture.getTextureID());
 		GL11.glBegin(GL11.GL_POLYGON);{
@@ -610,7 +643,8 @@ public class CS2150Coursework extends GraphicsLab
 			v10.submit();
 		}
 		GL11.glEnd();
-
+		
+		// enable texturing and bind an appropriate texture
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillTopTexture.getTextureID());
 		//high left
@@ -708,6 +742,7 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 	    
+		// enable texturing and bind an appropriate texture
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillRoofTexture.getTextureID());
 		//top near right
@@ -792,8 +827,10 @@ public class CS2150Coursework extends GraphicsLab
     }
     
     private void drawUnitBlades(){
-    	 GL11.glEnable(GL11.GL_TEXTURE_2D);
-         GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillBladeTexture.getTextureID());
+    	
+    	// enable texturing and bind an appropriate texture
+    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillBladeTexture.getTextureID());
     	
     	Vertex v1 = new Vertex(-0.4f, -0.4f, 4.1f);
     	Vertex v2 = new Vertex(0.4f, -0.4f, 4.1f);
@@ -1208,6 +1245,7 @@ public class CS2150Coursework extends GraphicsLab
 		}
 		GL11.glEnd();
 
+		// enable texturing and bind an appropriate texture
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,centreOfWindmillTexture.getTextureID());
 		//centre
@@ -1286,6 +1324,7 @@ public class CS2150Coursework extends GraphicsLab
     	Vertex v7 = new Vertex(0.2f, 0.8f,0.0f);
     	Vertex v8 = new Vertex(0.2f, 0.8f,0.2f);
     	
+    	// enable texturing and bind an appropriate texture
     	GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,windmillPinTexture.getTextureID());
         
@@ -1416,9 +1455,9 @@ public class CS2150Coursework extends GraphicsLab
     	Vertex v38 = new Vertex(0.0f, 0.0f,0.0f);
     	
     	
-    	
-   	 GL11.glEnable(GL11.GL_TEXTURE_2D);
-     GL11.glBindTexture(GL11.GL_TEXTURE_2D,	chickenLegsTexture.getTextureID());
+    	// enable texturing and bind an appropriate texture
+    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+   	 	GL11.glBindTexture(GL11.GL_TEXTURE_2D,	chickenLegsTexture.getTextureID());
    
     	//bottom of feet
     	GL11.glBegin(GL11.GL_POLYGON);
@@ -1520,7 +1559,7 @@ public class CS2150Coursework extends GraphicsLab
         }
         GL11.glEnd();
         
-       
+        // enable texturing and bind an appropriate texture
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, featheredTexture.getTextureID());
       
@@ -1741,6 +1780,7 @@ public class CS2150Coursework extends GraphicsLab
         }
         GL11.glEnd();
        
+        // enable texturing and bind an appropriate texture
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,birdHead.getTextureID());
         //bottom front of head
@@ -1795,10 +1835,10 @@ public class CS2150Coursework extends GraphicsLab
             
         }
         GL11.glEnd();
-        
+     
+        // enable texturing and bind an appropriate texture
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D,birdFace.getTextureID());
-        
         //top front of head
         GL11.glBegin(GL11.GL_POLYGON);
         {
