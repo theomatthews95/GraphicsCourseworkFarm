@@ -100,7 +100,7 @@ public class CS2150Coursework extends GraphicsLab
 	
     
     public static void main(String args[])
-    {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.9f);
+    {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",10.9f);
     	
     }
 
@@ -233,7 +233,7 @@ public class CS2150Coursework extends GraphicsLab
     			groundForwardValue += 0.0f; //stop controller going too far back
     		}
     		else{
-    			groundForwardValue += -0.001f;
+    			groundForwardValue += -0.001f * getAnimationScale();
         	}
     		
     	}
@@ -245,7 +245,7 @@ public class CS2150Coursework extends GraphicsLab
     			groundVerticalValue += 0.0f; //stop controller going too high
     		}
     		else{
-        		groundVerticalValue += -0.001f;
+        		groundVerticalValue += -0.001f * getAnimationScale();
         	}
     		
     	}
@@ -256,7 +256,7 @@ public class CS2150Coursework extends GraphicsLab
     			groundVerticalValue += 0.0f; //stop controller going too low
     		}
     		else{
-    			groundVerticalValue += 0.001f;
+    			groundVerticalValue += 0.001f * getAnimationScale();
     		}
     		
     	}
@@ -275,7 +275,7 @@ public class CS2150Coursework extends GraphicsLab
     }
     protected void updateScene()
     {
-    	bladeRotationAngle += -0.03f;
+    	bladeRotationAngle += -0.03f * getAnimationScale();
     }
     protected void renderScene()
     {
