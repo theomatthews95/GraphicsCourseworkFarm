@@ -100,7 +100,7 @@ public class CS2150Coursework extends GraphicsLab
 	
     
     public static void main(String args[])
-    {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.01f);
+    {   new CS2150Coursework().run(WINDOWED,"CS2150 Coursework Submission",0.9f);
     	
     }
 
@@ -185,7 +185,7 @@ public class CS2150Coursework extends GraphicsLab
     	//Rotate blades faster when R key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_R))
     	{
-    		bladeRotationAngle += -0.05f;
+    		bladeRotationAngle += -0.05f * getAnimationScale();
     		if (bladeRotationAngle < -360.0f) // Wrap the angle back around into 0-360 degrees.
             {  bladeRotationAngle = 0.0f;
             }
@@ -194,7 +194,7 @@ public class CS2150Coursework extends GraphicsLab
     	//Flap birds wings when F key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_F))
     			{
-    		wingRotationAngle += -0.1f;
+    		wingRotationAngle += -0.1f * getAnimationScale();
     		if (wingRotationAngle < -45.0f) // Wrap the angle back around into 0-360 degrees.
             {  wingRotationAngle = 45.0f;
             }
@@ -203,14 +203,14 @@ public class CS2150Coursework extends GraphicsLab
     	//Rotate whole ground plane left when Left key arrow is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_LEFT))
     	{
-    		groundRotationAngle += 0.01f;
+    		groundRotationAngle += 0.01f * getAnimationScale();
     		
     	}
     
     	//Rotate whole ground plane right when Right arrow key is pressed
     	if(Keyboard.isKeyDown(Keyboard.KEY_RIGHT))
     	{
-    		groundRotationAngle += -0.01f;
+    		groundRotationAngle += -0.01f * getAnimationScale();
     		
     	}
     	
@@ -221,7 +221,7 @@ public class CS2150Coursework extends GraphicsLab
     			groundForwardValue += 0.0f; //stop controller going too forward
     		}
     		else{
-    			groundForwardValue += 0.001f;
+    			groundForwardValue += 0.001f * getAnimationScale();
     		}
     		
     	}
